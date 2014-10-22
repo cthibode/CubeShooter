@@ -1,0 +1,4 @@
+CubeShooter
+===========
+
+C++/OpenGL project
