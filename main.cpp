@@ -1,14 +1,25 @@
 #include <stdio.h>
+#include <vector>
 #include "main.h"
 #include "window.h"
 #include "shader.h"
 #include "glslHelper.h"
+#include "geom.h"
 
-using namespace std;
+#define STAGE_SIZE 30
+#define STAGE_HEIGHT 4
+
+void handleKeyboardInput(Window *window);
+void createStage(vector<Wall*> *walls);
 
 int main() {
    Window *window = new Window(1920, 1080);
    Shader *shader = new Shader();
+   vector<Wall*> walls;
+   unsigned int count;
+
+   GLint hPos, hNorm;
+   GLint hModelMat, hViewMat, hProjMat;
 
    /* Initialize the window */
    if (!window->initialize()) {
@@ -29,36 +40,39 @@ int main() {
    }
    shader->initHandles();
 
+   /* Retrieving handles to save some function calls in the main loop */
+   hPos = shader->getPositionHandle();
+   hNorm = shader->getNormalHandle();
+   hModelMat = shader->getModelMatHandle();
+   hViewMat = shader->getViewMatHandle();
+   hProjMat = shader->getProjMatHandle();
+
    /* Initialize buffers */
    glClearColor(1.0, 1.0, 1.0, 1.0);
    glClearDepth(1.0);
    glDepthFunc(GL_LEQUAL);
    glEnable(GL_DEPTH_TEST);
 
+   /* Initialize the stage*/
+   createStage(&walls);
+
+   // temp
+   mat4 Projection = perspective(80.0f, (float)1920/1080, 0.1f, 50.f);
+   glUniformMatrix4fv(hProjMat, 1, GL_FALSE, value_ptr(Projection));
+   mat4 View = lookAt(vec3(0, 0, 0), vec3(0, 0, -1), vec3(0, 1, 0));
+   glUniformMatrix4fv(hViewMat, 1, GL_FALSE, value_ptr(View));
+
    /* Game loop */
    while (!window->getShouldClose()) {
-      float ratio;
-      int width, height;
-      glfwGetFramebufferSize(window->getWindow(), &width, &height);
-      ratio = width / (float)height;
-      glViewport(0, 0, width, height);
-      glClear(GL_COLOR_BUFFER_BIT);
-      glMatrixMode(GL_PROJECTION);
-      glLoadIdentity();
-      glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity();
-      glRotatef((float)glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
-      glBegin(GL_TRIANGLES);
-      glColor3f(1.f, 0.f, 0.f);
-      glVertex3f(-0.6f, -0.4f, 0.f);
-      glColor3f(0.f, 1.f, 0.f);
-      glVertex3f(0.6f, -0.4f, 0.f);
-      glColor3f(0.f, 0.f, 1.f);
-      glVertex3f(0.f, 0.6f, 0.f);
-      glEnd();
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+      handleKeyboardInput(window);
 
+      for (count = 0; count < walls.size(); count++) {
+         shader->setMaterial(walls[count]->getColor());
+         walls[count]->draw(hPos, hNorm, hModelMat);
+      }
+      
       window->updateWindow();
    }
    
@@ -66,4 +80,20 @@ int main() {
    delete window;
 
    return 0;
+}
+
+/* Check for key presses and respond accordingly */
+void handleKeyboardInput(Window *window) {
+   if (window->isKeyPressed(GLFW_KEY_ESCAPE))
+      window->setShouldClose(true);
+}
+
+/* Initialize the stage by adding the walls */
+void createStage(vector<Wall*> *walls) {
+   Wall *temp;
+
+   temp = new Wall();
+   temp->setPosition(vec3(0, 0, -STAGE_SIZE/2.0));
+   temp->setScale(vec3(STAGE_SIZE, STAGE_HEIGHT, 1));
+   walls->push_back(temp);
 }

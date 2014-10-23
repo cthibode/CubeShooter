@@ -77,12 +77,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="geom.cpp" />
     <ClCompile Include="glslHelper.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="shader.cpp" />
+    <ClCompile Include="square.cpp" />
+    <ClCompile Include="wall.cpp" />
     <ClCompile Include="window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="geom.h" />
     <ClInclude Include="glslHelper.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="shader.h" />

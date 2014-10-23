@@ -52,11 +52,18 @@ void Window::updateWindow() {
    glfwPollEvents();
 }
 
+/* Returns true if the given key is pressed, otherwise false */
+bool Window::isKeyPressed(int key) {
+   return (glfwGetKey(window, key) ==  GLFW_PRESS);
+}
+
+/* Set if the window should close */
+void Window::setShouldClose(bool shouldClose) {
+   int close = shouldClose ? GL_TRUE : GL_FALSE;
+   glfwSetWindowShouldClose(window, close);
+}
+
 /* Returns non-zero if the window should close, otherwise 0 */
 int Window::getShouldClose() {
    return glfwWindowShouldClose(window);
-}
-
-GLFWwindow* Window::getWindow() {
-   return window;
 }

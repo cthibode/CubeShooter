@@ -1,5 +1,6 @@
 #include "main.h"
 
+/* Manages the GLFW window */
 class Window {
    public:
       Window();
@@ -8,8 +9,9 @@ class Window {
       int initialize();
       void destroy();
       void updateWindow();
+      bool isKeyPressed(int key);
+      void setShouldClose(bool shouldClose);
       int getShouldClose();
-      GLFWwindow* getWindow();
 
    private:
       GLFWwindow *window;
