@@ -26,6 +26,6 @@
 using namespace std;
 using namespace glm;
 
-enum Color {GRAY, DARK_GRAY, GLOW_YELLOW};
+enum Color {GRAY, DARK_GRAY, WHITE, GLOW_YELLOW};
 
 #endif

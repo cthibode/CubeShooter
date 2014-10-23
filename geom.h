@@ -41,7 +41,23 @@ class Square : public Geom {
       static vector<unsigned short> squareIndexes;
       static GLuint squareVbo, squareNbo, squareIbo;
       static unsigned int squareIboLen;
+};
 
+/* A Geom object that is a cube */
+class Cube : public Geom {
+   public:
+      virtual ~Cube();
+
+   protected:
+      Cube();
+
+   private:
+      void cubeInit();
+      static vector<float> cubeVerts;
+      static vector<float> cubeNorms;
+      static vector<unsigned short> cubeIndexes;
+      static GLuint cubeVbo, cubeNbo, cubeIbo;
+      static unsigned int cubeIboLen;
 };
 
 /* A Square that acts as a wall for the stage */
@@ -49,4 +65,11 @@ class Wall : public Square {
    public:
       Wall();
       ~Wall();
+};
+
+/* A Cube that tries to attack the player */
+class Enemy : public Cube {
+   public:
+      Enemy();
+      ~Enemy();
 };

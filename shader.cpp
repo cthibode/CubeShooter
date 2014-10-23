@@ -71,14 +71,21 @@ void Shader::setMaterial(Color color) {
       case GRAY:
          glUniform3f(h_uMatDif, 0.5f, 0.5f, 0.5f);
          glUniform3f(h_uMatSpec, 0.5f, 0.5f, 0.5f);
-         glUniform3f(h_uMatAmb, 0.5f, 0.5f, 0.5f);
+         glUniform3f(h_uMatAmb, 0.2f, 0.2f, 0.2f);
          glUniform1f(h_uMatShine, 1.0);
          glUniform1i(h_uShadeMode, PHONG);
          break;
       case DARK_GRAY:
          glUniform3f(h_uMatDif, 0.3f, 0.3f, 0.3f);
          glUniform3f(h_uMatSpec, 0.3f, 0.3f, 0.3f);
-         glUniform3f(h_uMatAmb, 0.3f, 0.3f, 0.3f);
+         glUniform3f(h_uMatAmb, 0.12f, 0.12f, 0.12f);
+         glUniform1f(h_uMatShine, 1.0f);
+         glUniform1i(h_uShadeMode, PHONG);
+         break;
+      case WHITE:
+         glUniform3f(h_uMatDif, 1.0f, 1.0f, 1.0f);
+         glUniform3f(h_uMatSpec, 1.0f, 1.0f, 1.0f);
+         glUniform3f(h_uMatAmb, 0.5f, 0.5f, 0.5f);
          glUniform1f(h_uMatShine, 1.0f);
          glUniform1i(h_uShadeMode, PHONG);
          break;

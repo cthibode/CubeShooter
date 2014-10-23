@@ -77,6 +77,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="cube.cpp" />
+    <ClCompile Include="enemy.cpp" />
     <ClCompile Include="geom.cpp" />
     <ClCompile Include="glslHelper.cpp" />
     <ClCompile Include="main.cpp" />

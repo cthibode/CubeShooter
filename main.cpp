@@ -16,6 +16,7 @@ int main() {
    Window *window = new Window(1920, 1080);
    Shader *shader = new Shader();
    vector<Wall*> walls;
+   vector<Enemy*> enemies;
    unsigned int count;
 
    GLint hPos, hNorm;
@@ -56,11 +57,15 @@ int main() {
    /* Initialize the stage*/
    createStage(&walls);
 
-   // temp
+   // temp==========
    mat4 Projection = perspective(80.0f, (float)1920/1080, 0.1f, 50.f);
    glUniformMatrix4fv(hProjMat, 1, GL_FALSE, value_ptr(Projection));
    mat4 View = lookAt(vec3(0, 0, 0), vec3(0, 0, -1), vec3(0, 1, 0));
    glUniformMatrix4fv(hViewMat, 1, GL_FALSE, value_ptr(View));
+   Enemy *temp = new Enemy();
+   temp->setPosition(vec3(1, 1, -5));
+   enemies.push_back(temp);
+   //===============
 
    /* Game loop */
    while (!window->getShouldClose()) {
@@ -71,6 +76,10 @@ int main() {
       for (count = 0; count < walls.size(); count++) {
          shader->setMaterial(walls[count]->getColor());
          walls[count]->draw(hPos, hNorm, hModelMat);
+      }
+      for (count = 0; count < enemies.size(); count++) {
+         shader->setMaterial(enemies[count]->getColor());
+         enemies[count]->draw(hPos, hNorm, hModelMat);
       }
       
       window->updateWindow();
