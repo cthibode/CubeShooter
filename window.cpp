@@ -46,6 +46,12 @@ void Window::destroy() {
    glfwTerminate();
 }
 
+/* Update the window with the buffer contents */
+void Window::updateWindow() {
+   glfwSwapBuffers(window);
+   glfwPollEvents();
+}
+
 /* Returns non-zero if the window should close, otherwise 0 */
 int Window::getShouldClose() {
    return glfwWindowShouldClose(window);

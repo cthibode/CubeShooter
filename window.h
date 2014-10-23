@@ -7,6 +7,7 @@ class Window {
       ~Window();
       int initialize();
       void destroy();
+      void updateWindow();
       int getShouldClose();
       GLFWwindow* getWindow();
 
