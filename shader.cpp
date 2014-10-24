@@ -63,6 +63,12 @@ void Shader::initHandles() {
    h_uMatAmb = glGetUniformLocation(shadeProg, "uMat.aColor");
    h_uMatShine = glGetUniformLocation(shadeProg, "uMat.shine");
    h_uShadeMode = glGetUniformLocation(shadeProg, "uShadeMode");
+
+   h_uLightPos = glGetUniformLocation(shadeProg, "uLightPos");
+   h_uLightColor = glGetUniformLocation(shadeProg, "uLightColor");
+   h_uNumLights = glGetUniformLocation(shadeProg, "uNumLights");
+
+   h_uCamPos = glGetUniformLocation(shadeProg, "uCamPos");
 }
 
 /* Set the material type to the given color */
@@ -117,4 +123,20 @@ GLint Shader::getViewMatHandle() {
 
 GLint Shader::getProjMatHandle() {
    return h_uProjMatrix;
+}
+
+GLint Shader::getLightPosHandle() {
+   return h_uLightPos;
+}
+
+GLint Shader::getLightColorHandle() {
+   return h_uLightColor;
+}
+
+GLint Shader::getNumLightsHandle() {
+   return h_uNumLights;
+}
+
+GLint Shader::getCamPosHandle() {
+   return h_uCamPos;
 }

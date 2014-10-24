@@ -17,6 +17,10 @@ class Shader {
       GLint getModelMatHandle();
       GLint getViewMatHandle();
       GLint getProjMatHandle();
+      GLint getLightPosHandle();
+      GLint getLightColorHandle();
+      GLint getNumLightsHandle();
+      GLint getCamPosHandle();
 
    private:
       int shadeProg;
@@ -33,4 +37,10 @@ class Shader {
       GLint h_uMatAmb;
       GLint h_uMatShine;
       GLint h_uShadeMode;
+
+      GLint h_uLightPos;
+      GLint h_uLightColor;
+      GLint h_uNumLights;
+
+      GLint h_uCamPos;
 };

@@ -24,6 +24,10 @@ void Camera::setView(GLint viewMatHandle) {
    glUniformMatrix4fv(viewMatHandle, 1, GL_FALSE, value_ptr(View));
 }
 
+void Camera::setCamPos(GLint camPosHandle) {
+   glUniform3f(camPosHandle, eye.x, eye.y, eye.z);
+}
+
 /* Move the camera forward/back at the given speed. Positive speed moves forward, negative speed moves back. */
 void Camera::moveFB(float speed) {
    vec3 wAxis = normalize(eye - lookAt);

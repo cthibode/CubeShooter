@@ -6,6 +6,7 @@ class Camera {
       ~Camera();
       void setBounds(float xPos, float xNeg, float zPos, float zNeg);
       void setView(GLint viewMatHandle);
+      void setCamPos(GLint camPosHandle);
       void moveFB(float speed);
       void moveLR(float speed);
       void moveLookAt(int dx, int dy, int width, int height);

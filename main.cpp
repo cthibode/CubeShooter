@@ -11,10 +11,12 @@
 #define STAGE_HEIGHT 4.0f
 #define CAM_SPEED 0.05f
 #define CAM_BUFFER 0.4f
+#define MAX_LIGHTS 15
 
 void handleKeyboardInput(Window *window, Camera *camera);
 void handleMouseInput(Window *window, Camera *camera);
 void createStage(vector<Wall*> *walls);
+void initLights(vector<float> *lightPos, vector<float> *lightColor);
 
 int main() {
    Window *window = new Window(1920, 1080);
@@ -22,10 +24,14 @@ int main() {
    Camera *camera = new Camera();
    vector<Wall*> walls;
    vector<Enemy*> enemies;
+   vector<float> lightPos;
+   vector<float> lightColor;
    unsigned int count;
 
    GLint hPos, hNorm;
    GLint hModelMat, hViewMat, hProjMat;
+   GLint hLightPos, hLightColor, hNumLights;
+   GLint hCamPos;
 
    /* Initialize the window */
    if (!window->initialize()) {
@@ -52,6 +58,10 @@ int main() {
    hModelMat = shader->getModelMatHandle();
    hViewMat = shader->getViewMatHandle();
    hProjMat = shader->getProjMatHandle();
+   hLightPos = shader->getLightPosHandle();
+   hLightColor = shader->getLightColorHandle();
+   hNumLights = shader->getNumLightsHandle();
+   hCamPos = shader->getCamPosHandle();
 
    /* Initialize buffers */
    glClearColor(1.0, 1.0, 1.0, 1.0);
@@ -65,6 +75,7 @@ int main() {
 
    /* Initialize the stage*/
    createStage(&walls);
+   initLights(&lightPos, &lightColor);
    camera->setBounds(STAGE_SIZE/2.0 - CAM_BUFFER, -STAGE_SIZE/2.0 + CAM_BUFFER, STAGE_SIZE/2.0 - CAM_BUFFER, -STAGE_SIZE/2.0 + CAM_BUFFER);
 
    /* Game loop */
@@ -74,6 +85,7 @@ int main() {
       handleKeyboardInput(window, camera);
       handleMouseInput(window, camera);
       camera->setView(hViewMat);
+      camera->setCamPos(hCamPos);
       window->setProjMatrix(hProjMat);
 
       for (count = 0; count < walls.size(); count++) {
@@ -85,6 +97,10 @@ int main() {
          enemies[count]->draw(hPos, hNorm, hModelMat);
       }
       
+      glUniform3fv(hLightPos, lightPos.size() / 3, lightPos.data());
+      glUniform3fv(hLightColor, lightColor.size() / 3, lightColor.data());
+      glUniform1i(hNumLights, lightPos.size() / 3);
+
       window->updateWindow();
    }
    
@@ -158,4 +174,25 @@ void createStage(vector<Wall*> *walls) {
    temp->setRotation(0, 0, -90);
    temp->setScale(vec3(STAGE_SIZE, STAGE_HEIGHT, 1));
    walls->push_back(temp);
+}
+
+void initLights(vector<float> *lightPos, vector<float> *lightColor) {
+   float lp[] = {
+      0, STAGE_HEIGHT/2.0, -STAGE_SIZE/2.0,
+      0, STAGE_HEIGHT/2.0, STAGE_SIZE/2.0,
+      -STAGE_SIZE/2.0, STAGE_HEIGHT/2.0, 0,
+      STAGE_SIZE/2.0, STAGE_HEIGHT/2.0, 0,
+      0, STAGE_HEIGHT, 0
+   };
+
+   float lc[] = {
+      0, 1, 0,
+      0, 1, 0,
+      1, 0, 1,
+      1, 0, 1,
+      0, 0, 1
+   };
+
+   *lightPos = vector<float>(lp, lp + sizeof(lp) / sizeof(float));
+   *lightColor = vector<float>(lc, lc + sizeof(lc) / sizeof(float));
 }
