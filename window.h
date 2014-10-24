@@ -10,6 +10,8 @@ class Window {
       void destroy();
       void updateWindow();
       bool isKeyPressed(int key);
+      void getMouseDiff(int *dx, int *dy);
+      void getDimensions(int *w, int *h);
       void setShouldClose(bool shouldClose);
       int getShouldClose();
 
