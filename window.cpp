@@ -5,6 +5,10 @@ static void errorCallback(int error, const char* description) {
    fprintf(stderr, "%s\n", description);
 }
 
+static void windowSizeCallback(GLFWwindow *window, int width, int height) {
+   glViewport(0, 0, width, height);
+}
+
 Window::Window() {
    window = 0;
    width = 1920;
@@ -38,6 +42,7 @@ int Window::initialize() {
 
    glfwSetCursorPos(window, width / 2.0, height / 2.0);
    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+   glfwSetWindowSizeCallback(window, windowSizeCallback);
    glfwMakeContextCurrent(window);
    return 1;
 }
@@ -52,6 +57,12 @@ void Window::destroy() {
 void Window::updateWindow() {
    glfwSwapBuffers(window);
    glfwPollEvents();
+}
+
+/* Calculate the projection matrix and send to the shader*/
+void Window::setProjMatrix(GLint projMatHandle) {
+   mat4 Projection = perspective(80.0f, (float)width / height, 0.1f, 50.0f);
+   glUniformMatrix4fv(projMatHandle, 1, GL_FALSE, value_ptr(Projection));
 }
 
 /* Returns true if the given key is pressed, otherwise false */

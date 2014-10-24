@@ -9,6 +9,7 @@ class Window {
       int initialize();
       void destroy();
       void updateWindow();
+      void setProjMatrix(GLint projMatHandle);
       bool isKeyPressed(int key);
       void getMouseDiff(int *dx, int *dy);
       void getDimensions(int *w, int *h);
