@@ -11,6 +11,7 @@ class Window {
       void updateWindow();
       void setProjMatrix(GLint projMatHandle);
       bool isKeyPressed(int key);
+      bool isMousePressed(int button);
       void getMouseDiff(int *dx, int *dy);
       void getDimensions(int *w, int *h);
       void setShouldClose(bool shouldClose);

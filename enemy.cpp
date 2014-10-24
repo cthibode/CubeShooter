@@ -22,6 +22,8 @@ void Enemy::update(vec3 destination) {
    vec3 moveVec = normalize(destination - tPosition);
 
    if (state == LIVE) {
+      if (moveVec.z == 0)
+         moveVec.z = 0.001;
       tRotYaw = RAD_TO_DEG(atan(moveVec.x / moveVec.z));
       tPosition.x += moveVec.x * moveSpeed;
       tPosition.y = tScale.y / 2.0 + abs(sin(age)) * jumpHeight;

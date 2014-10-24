@@ -67,7 +67,12 @@ void Window::setProjMatrix(GLint projMatHandle) {
 
 /* Returns true if the given key is pressed, otherwise false */
 bool Window::isKeyPressed(int key) {
-   return (glfwGetKey(window, key) ==  GLFW_PRESS);
+   return (glfwGetKey(window, key) == GLFW_PRESS);
+}
+
+/* Returns true if the given mouse button is pressed, otherwise false */
+bool Window::isMousePressed(int button) {
+   return (glfwGetMouseButton(window, button) == GLFW_PRESS);
 }
 
 /* Stores the pixel difference between the cursor's position and the center of the screen into the given addresses */

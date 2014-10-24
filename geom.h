@@ -86,3 +86,15 @@ class Enemy : public Cube {
       float jumpSpeed;
       float moveSpeed;
 };
+
+class Bullet : public Cube {
+   public:
+      Bullet();
+      ~Bullet();
+      void align(vec3 target);
+      void update();
+
+   private:
+      vec3 direction;
+      float speed;
+};

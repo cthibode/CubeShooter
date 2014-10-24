@@ -11,6 +11,7 @@ class Camera {
       void moveLR(float speed);
       void moveLookAt(int dx, int dy, int width, int height);
       vec3 getEye();
+      vec3 getLookAt();
 
    private:
       vec3 eye;

@@ -77,9 +77,9 @@ void Camera::moveLookAt(int dx, int dy, int width, int height) {
    pitchAng += dy * PI / height;
    yawAng += dx * PI / width;
 
-   if (pitchAng >= DEG_TO_RAD(80))
+   if (pitchAng > DEG_TO_RAD(80))
       pitchAng = DEG_TO_RAD(80);
-   else if (pitchAng <= DEG_TO_RAD(-80))
+   else if (pitchAng < DEG_TO_RAD(-80))
       pitchAng = DEG_TO_RAD(-80);
 
    lookAt.x = eye.x + cos(pitchAng) * cos(yawAng);
@@ -89,4 +89,8 @@ void Camera::moveLookAt(int dx, int dy, int width, int height) {
 
 vec3 Camera::getEye() {
    return eye;
+}
+
+vec3 Camera::getLookAt() {
+   return lookAt;
 }

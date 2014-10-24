@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <time.h>
 #include <vector>
 #include "main.h"
 #include "window.h"
@@ -14,7 +15,7 @@
 #define MAX_LIGHTS 15
 
 void handleKeyboardInput(Window *window, Camera *camera);
-void handleMouseInput(Window *window, Camera *camera);
+void handleMouseInput(Window *window, Camera *camera, vector<Bullet*> *bullets);
 void createStage(vector<Wall*> *walls);
 void initLights(vector<float> *lightPos, vector<float> *lightColor);
 
@@ -24,6 +25,7 @@ int main() {
    Camera *camera = new Camera();
    vector<Wall*> walls;
    vector<Enemy*> enemies;
+   vector<Bullet*> bullets;
    vector<float> lightPos;
    vector<float> lightColor;
    unsigned int count;
@@ -88,7 +90,7 @@ int main() {
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
       handleKeyboardInput(window, camera);
-      handleMouseInput(window, camera);
+      handleMouseInput(window, camera, &bullets);
       camera->setView(hViewMat);
       camera->setCamPos(hCamPos);
       window->setProjMatrix(hProjMat);
@@ -101,6 +103,11 @@ int main() {
          shader->setMaterial(enemies[count]->getColor());
          enemies[count]->update(camera->getEye());
          enemies[count]->draw(hPos, hNorm, hModelMat);
+      }
+      for (count = 0; count < bullets.size(); count++) {
+         shader->setMaterial(bullets[count]->getColor());
+         bullets[count]->update();
+         bullets[count]->draw(hPos, hNorm, hModelMat);
       }
       
       glUniform3fv(hLightPos, lightPos.size() / 3, lightPos.data());
@@ -130,12 +137,30 @@ void handleKeyboardInput(Window *window, Camera *camera) {
       window->setShouldClose(true);
 }
 
-void handleMouseInput(Window *window, Camera *camera) {
+/* Check for mouse movement and clicks and respond accordingly */
+void handleMouseInput(Window *window, Camera *camera, vector<Bullet*> *bullets) {
+   static int bulletCooldown = 0;
    int dx, dy, width, height;
+   Bullet *newBullet;
+   vec3 camPos, lookAtPos;
 
    window->getMouseDiff(&dx, &dy);
    window->getDimensions(&width, &height);
    camera->moveLookAt(dx, dy, width, height);
+
+   if (bulletCooldown > 0)
+      bulletCooldown--;
+   if (bulletCooldown <= 0 && window->isMousePressed(GLFW_MOUSE_BUTTON_LEFT)) {
+      // Add options for other weapon types here =================
+      camPos = camera->getEye();
+      lookAtPos = camera->getLookAt();
+      newBullet = new Bullet();
+      newBullet->setPosition(vec3(camPos.x, camPos.y - 0.2, camPos.z));
+      newBullet->align(vec3(lookAtPos.x, lookAtPos.y - 0.2, lookAtPos.z));
+      bullets->push_back(newBullet);
+      bulletCooldown = 30;//Change this later
+   }
+      
 }
 
 /* Initialize the stage by adding the walls */
