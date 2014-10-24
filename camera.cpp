@@ -86,3 +86,7 @@ void Camera::moveLookAt(int dx, int dy, int width, int height) {
    lookAt.y = eye.y + sin(pitchAng);
    lookAt.z = eye.z + cos(pitchAng) * cos(PI/2 - yawAng);
 }
+
+vec3 Camera::getEye() {
+   return eye;
+}

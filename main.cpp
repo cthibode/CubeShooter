@@ -78,6 +78,11 @@ int main() {
    initLights(&lightPos, &lightColor);
    camera->setBounds(STAGE_SIZE/2.0 - CAM_BUFFER, -STAGE_SIZE/2.0 + CAM_BUFFER, STAGE_SIZE/2.0 - CAM_BUFFER, -STAGE_SIZE/2.0 + CAM_BUFFER);
 
+   //temp
+   Enemy *temp = new Enemy();
+   temp->setPosition(vec3(0, 0, -5));
+   enemies.push_back(temp);
+
    /* Game loop */
    while (!window->getShouldClose()) {
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -94,6 +99,7 @@ int main() {
       }
       for (count = 0; count < enemies.size(); count++) {
          shader->setMaterial(enemies[count]->getColor());
+         enemies[count]->update(camera->getEye());
          enemies[count]->draw(hPos, hNorm, hModelMat);
       }
       

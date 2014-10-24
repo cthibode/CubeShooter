@@ -10,6 +10,7 @@ class Camera {
       void moveFB(float speed);
       void moveLR(float speed);
       void moveLookAt(int dx, int dy, int width, int height);
+      vec3 getEye();
 
    private:
       vec3 eye;
