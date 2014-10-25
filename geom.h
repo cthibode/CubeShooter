@@ -1,7 +1,7 @@
 #include <vector>
 #include "main.h" 
 
-enum EnemyState {SPAWN, LIVE, DIE};
+enum EnemyState {SPAWN, LIVE, DIE, DEAD};
 
 /* Parent class for all shapes */
 class Geom {
@@ -85,6 +85,7 @@ class Enemy : public Cube {
       EnemyState state;
       
       int health;
+      float size;
       float radius;
       float jumpHeight;
       float jumpSpeed;

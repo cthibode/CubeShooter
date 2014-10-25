@@ -1,7 +1,8 @@
 #include "geom.h"
 
 Enemy::Enemy() : Cube() {
-   tScale = vec3(1);
+   /* Normal enemy */
+   size = 1.0;
    radius = 0.7;
    health = 2;
    jumpHeight = 0.5;
@@ -9,9 +10,10 @@ Enemy::Enemy() : Cube() {
    moveSpeed = 0.02;
 
    /* Common for all enemies */
+   tScale = vec3(0.1);
    color = WHITE;
    age = 0;
-   state = LIVE; // change later
+   state = SPAWN;
 }
 
 Enemy::~Enemy() {
@@ -32,12 +34,26 @@ void Enemy::update(vec3 destination) {
       age += jumpSpeed;
    }
    else if (state == SPAWN) {
+      tScale *= 1.05;
+      tPosition.y = tScale.y / 2.0;
+      tRotPitch = tRotRoll = tRotYaw = sin(age) * 100;
+      age++;
 
+      if (tScale.x >= size) {
+         tScale = vec3(size);
+         tRotPitch = tRotRoll = tRotYaw = 0;
+         state = LIVE;
+      }
    }
    else if (state == DIE) {
+      tScale *= 0.95;
+      tPosition.y = tScale.y / 2.0;
+      tRotPitch = tRotRoll = tRotYaw = sin(age) * 100;
+      age++;
 
+      if (tScale.x <= 0.1)
+         state = DEAD;
    }
-
 }
 
 /* Reduces health by 1 and changes the enemy's state if necessary 

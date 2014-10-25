@@ -12,6 +12,9 @@
 #define STAGE_HEIGHT 4.0f
 #define CAM_SPEED 0.05f
 #define CAM_BUFFER 0.4f
+#define ENEMY_COOLDOWN 200
+#define SPAWN_BUFFER 2
+#define SPAWN_PTS 8
 #define MAX_LIGHTS 15
 
 void handleKeyboardInput(Window *window, Camera *camera);
@@ -29,12 +32,25 @@ int main() {
    vector<Bullet*> bullets;
    vector<float> lightPos;
    vector<float> lightColor;
+   Enemy *tmpEnemy;
+   int enemyCooldown = ENEMY_COOLDOWN;
    unsigned int count, count2;
 
    GLint hPos, hNorm;
    GLint hModelMat, hViewMat, hProjMat;
    GLint hLightPos, hLightColor, hNumLights;
    GLint hCamPos;
+
+   vec3 enemySpawnPts[] = {
+      vec3(-STAGE_SIZE / 2.0 + SPAWN_BUFFER, 0, -STAGE_SIZE / 2.0 + SPAWN_BUFFER),
+      vec3(0, 0, -STAGE_SIZE / 2.0 + SPAWN_BUFFER),
+      vec3(STAGE_SIZE / 2.0 - SPAWN_BUFFER, 0, -STAGE_SIZE / 2.0 + SPAWN_BUFFER),
+      vec3(STAGE_SIZE / 2.0 - SPAWN_BUFFER, 0, 0),
+      vec3(STAGE_SIZE / 2.0 - SPAWN_BUFFER, 0, STAGE_SIZE / 2.0 - SPAWN_BUFFER),
+      vec3(0, 0, STAGE_SIZE / 2.0 - SPAWN_BUFFER),
+      vec3(-STAGE_SIZE / 2.0 + SPAWN_BUFFER, 0, STAGE_SIZE / 2.0 - SPAWN_BUFFER),
+      vec3(-STAGE_SIZE / 2.0 + SPAWN_BUFFER, 0, 0),
+   };
 
    /* Initialize the window */
    if (!window->initialize()) {
@@ -77,14 +93,10 @@ int main() {
    glEnable(GL_CULL_FACE);
 
    /* Initialize the stage*/
+   srand(time(NULL));
    createStage(&walls);
    initLights(&lightPos, &lightColor);
    camera->setBounds(STAGE_SIZE/2.0 - CAM_BUFFER, -STAGE_SIZE/2.0 + CAM_BUFFER, STAGE_SIZE/2.0 - CAM_BUFFER, -STAGE_SIZE/2.0 + CAM_BUFFER);
-
-   //temp
-   Enemy *temp = new Enemy();
-   temp->setPosition(vec3(0, 0, -5));
-   enemies.push_back(temp);
 
    /* Game loop */
    while (!window->getShouldClose()) {
@@ -96,6 +108,14 @@ int main() {
       camera->setView(hViewMat);
       camera->setCamPos(hCamPos);
       window->setProjMatrix(hProjMat);
+
+      /* Add enemies */
+      if (--enemyCooldown <= 0) {
+         tmpEnemy = new Enemy();
+         tmpEnemy->setPosition(enemySpawnPts[rand() % SPAWN_PTS]);
+         enemies.push_back(tmpEnemy);
+         enemyCooldown = ENEMY_COOLDOWN;
+      }
 
       /* Draw the stage */
       for (count = 0; count < walls.size(); count++) {
@@ -114,8 +134,15 @@ int main() {
                   break;
             }
          }
-         shader->setMaterial(enemies[count]->getColor());
+
          enemies[count]->update(camera->getEye());
+         if (enemies[count]->getState() == DEAD) {
+            delete enemies[count];
+            enemies.erase(enemies.begin() + count);
+            count--;
+            continue;
+         }
+         shader->setMaterial(enemies[count]->getColor());
          enemies[count]->draw(hPos, hNorm, hModelMat);
       }
       /* Draw the bullets */
