@@ -16,6 +16,7 @@
 #define SPAWN_BUFFER 2
 #define SPAWN_PTS 8
 #define MAX_LIGHTS 15
+#define MIN_LIGHTS 5
 
 void handleKeyboardInput(Window *window, Camera *camera);
 void handleMouseInput(Window *window, Camera *camera, vector<Bullet*> *bullets);
@@ -125,13 +126,15 @@ int main() {
       /* Draw the enemies */
       for (count = 0; count < enemies.size(); count++) {
          /* Check for collisions with bullets */
-         for (count2 = 0; count2 < bullets.size(); count2++) {
-            if (enemies[count]->isColliding(bullets[count2]->getPosition())) {
-               delete bullets[count2];
-               bullets.erase(bullets.begin() + count2);
-               count2--;
-               if (enemies[count]->reduceHealth())
-                  break;
+         if (enemies[count]->getState() == LIVE) {
+            for (count2 = 0; count2 < bullets.size(); count2++) {
+               if (enemies[count]->isColliding(bullets[count2]->getPosition())) {
+                  delete bullets[count2];
+                  bullets.erase(bullets.begin() + count2);
+                  count2--;
+                  if (enemies[count]->reduceHealth())
+                     break;
+               }
             }
          }
 
@@ -157,12 +160,21 @@ int main() {
          shader->setMaterial(bullets[count]->getColor());
          bullets[count]->update();
          bullets[count]->draw(hPos, hNorm, hModelMat);
+
+         lightPos.push_back(bullets[count]->getPosition().x);
+         lightPos.push_back(bullets[count]->getPosition().y);
+         lightPos.push_back(bullets[count]->getPosition().z);
+         lightColor.push_back(1);
+         lightColor.push_back(1);
+         lightColor.push_back(0);
       }
       
       /* Send the light data to the shader */
       glUniform3fv(hLightPos, lightPos.size() / 3, lightPos.data());
       glUniform3fv(hLightColor, lightColor.size() / 3, lightColor.data());
       glUniform1i(hNumLights, lightPos.size() / 3);
+      lightPos.erase(lightPos.begin() + MIN_LIGHTS * 3, lightPos.end());
+      lightColor.erase(lightColor.begin() + MIN_LIGHTS * 3, lightColor.end());
 
       window->updateWindow();
    }

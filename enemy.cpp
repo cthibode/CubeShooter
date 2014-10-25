@@ -35,7 +35,7 @@ void Enemy::update(vec3 destination) {
    }
    else if (state == SPAWN) {
       tScale *= 1.05;
-      tPosition.y = tScale.y / 2.0;
+      tPosition.y = size / 2.0;
       tRotPitch = tRotRoll = tRotYaw = sin(age) * 100;
       age++;
 
@@ -47,11 +47,10 @@ void Enemy::update(vec3 destination) {
    }
    else if (state == DIE) {
       tScale *= 0.95;
-      tPosition.y = tScale.y / 2.0;
       tRotPitch = tRotRoll = tRotYaw = sin(age) * 100;
       age++;
 
-      if (tScale.x <= 0.1)
+      if (tScale.x <= 0.01)
          state = DEAD;
    }
 }

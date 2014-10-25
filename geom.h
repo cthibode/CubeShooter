@@ -2,6 +2,7 @@
 #include "main.h" 
 
 enum EnemyState {SPAWN, LIVE, DIE, DEAD};
+enum Weapon {PISTOL, MACHINE, SHOTGUN};
 
 /* Parent class for all shapes */
 class Geom {

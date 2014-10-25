@@ -1,4 +1,5 @@
 #define MAX_LIGHTS 15
+#define MIN_LIGHTS 5
 
 struct Material {
    vec3 dColor;
@@ -19,7 +20,7 @@ varying vec3 vPos, vNorm;
 void main() {
    vec3 totalColor = vec3(0);
    vec3 pos, norm, light, view, halfVec;
-   float angleNL, angleNH;
+   float angleNL, angleNH, attenuation;
 
    /* Blinn Phong shading */
    if (uShadeMode == 0) {
@@ -36,8 +37,13 @@ void main() {
          angleNH = clamp(dot(norm, halfVec), 0.0, 1.0);
          angleNH = pow(angleNH, uMat.shine);
 
-         totalColor += (uLightColor[count] * uMat.dColor * angleNL + uLightColor[count] * uMat.sColor * angleNH + uLightColor[count] * uMat.aColor) / 
-                       (distance(vPos, uLightPos[count]));
+         if (count < MIN_LIGHTS)
+            attenuation = distance(vPos, uLightPos[count]);
+         else
+            attenuation = 2 * distance(vPos, uLightPos[count]);
+
+         totalColor += (uLightColor[count] * uMat.dColor * angleNL + uLightColor[count] * uMat.sColor * angleNH + 
+                       uLightColor[count] * uMat.aColor) / attenuation;
       }
    }
    /* Ambient only */
