@@ -36,8 +36,8 @@ void Enemy::update(vec3 destination) {
    else if (state == SPAWN) {
       tScale *= 1.05;
       tPosition.y = size / 2.0;
-      tRotPitch = tRotRoll = tRotYaw = sin(age) * 100;
-      age++;
+      tRotPitch = tRotRoll = tRotYaw = age;
+      age += 20;
 
       if (tScale.x >= size) {
          tScale = vec3(size);
@@ -47,8 +47,8 @@ void Enemy::update(vec3 destination) {
    }
    else if (state == DIE) {
       tScale *= 0.95;
-      tRotPitch = tRotRoll = tRotYaw = sin(age) * 100;
-      age++;
+      tRotPitch = tRotRoll = tRotYaw = age;
+      age += 20;
 
       if (tScale.x <= 0.01)
          state = DEAD;
@@ -65,11 +65,6 @@ bool Enemy::reduceHealth() {
       ret = true;
    }
    return ret;
-}
-
-/* Returns true if the given point is within the enemy's bounding sphere, otherwise false */
-bool Enemy::isColliding(vec3 point) {
-   return (glm::distance(tPosition, point) < radius);
 }
 
 EnemyState Enemy::getState() {

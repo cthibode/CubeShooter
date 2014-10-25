@@ -115,3 +115,13 @@ void Cube::cubeInit() {
 
    geomInit(&cubeVbo, &cubeVerts, &cubeNbo, &cubeNorms, &cubeIbo, &cubeIndexes);
 }
+
+/* Returns true if the given point is within the cube's bounding sphere, otherwise false */
+bool Cube::isColliding(vec3 point) {
+   return (glm::distance(tPosition, point) < radius);
+}
+
+/* Returns true if the two cubes are intersecting, otherwise false */
+bool Cube::isColliding(Cube *cube) {
+   return (glm::distance(tPosition, cube->tPosition) < (radius + cube->radius));
+}

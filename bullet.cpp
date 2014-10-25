@@ -3,6 +3,7 @@
 Bullet::Bullet() : Cube() {
    tScale = vec3(0.02, 0.02, 0.2);
    color = GLOW_YELLOW;
+   radius = 0.2;
    speed = 0.3;
    life = 100;
 

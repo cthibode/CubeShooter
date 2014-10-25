@@ -51,9 +51,12 @@ class Square : public Geom {
 class Cube : public Geom {
    public:
       virtual ~Cube();
+      bool isColliding(vec3 point);
+      bool isColliding(Cube *cube);
 
    protected:
       Cube();
+      float radius;
 
    private:
       void cubeInit();
@@ -78,7 +81,6 @@ class Enemy : public Cube {
       ~Enemy();
       void update(vec3 destination);
       bool reduceHealth();
-      bool isColliding(vec3 point);
       EnemyState getState();
 
    private:
@@ -87,12 +89,12 @@ class Enemy : public Cube {
       
       int health;
       float size;
-      float radius;
       float jumpHeight;
       float jumpSpeed;
       float moveSpeed;
 };
 
+/* A Cube that hits and eliminates enemies */
 class Bullet : public Cube {
    public:
       Bullet();
@@ -107,4 +109,12 @@ class Bullet : public Cube {
       float xPosBound, xNegBound, yPosBound, yNegBound, zPosBound, zNegBound;
       float speed;
       int life;
+};
+
+/* A cube that gives the player a new weapon and increases score when picked up */
+class Crate : public Cube {
+   public:
+      Crate();
+      ~Crate();
+      void update();
 };

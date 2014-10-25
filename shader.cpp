@@ -95,6 +95,13 @@ void Shader::setMaterial(Color color) {
          glUniform1f(h_uMatShine, 1.0f);
          glUniform1i(h_uShadeMode, PHONG);
          break;
+      case BROWN:
+         glUniform3f(h_uMatDif, 0.6f, 0.4f, 0.0f);
+         glUniform3f(h_uMatSpec, 1.0f, 1.0f, 0.5f);
+         glUniform3f(h_uMatAmb, 0.3f, 0.2f, 0.0f);
+         glUniform1f(h_uMatShine, 100.0);
+         glUniform1i(h_uShadeMode, PHONG);
+         break;
       case GLOW_YELLOW:
          glUniform3f(h_uMatDif, 1.0f, 1.0f, 0.0f);
          glUniform3f(h_uMatSpec, 1.0f, 1.0f, 0.0f);

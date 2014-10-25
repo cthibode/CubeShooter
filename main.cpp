@@ -18,6 +18,11 @@
 #define MAX_LIGHTS 15
 #define MIN_LIGHTS 5
 
+typedef struct Player {
+   Weapon weapon;
+   int score;
+};
+
 void handleKeyboardInput(Window *window, Camera *camera);
 void handleMouseInput(Window *window, Camera *camera, vector<Bullet*> *bullets);
 void createStage(vector<Wall*> *walls);
@@ -28,11 +33,13 @@ int main() {
    Window *window = new Window(1920, 1080);
    Shader *shader = new Shader();
    Camera *camera = new Camera();
+   Player player;
    vector<Wall*> walls;
    vector<Enemy*> enemies;
    vector<Bullet*> bullets;
    vector<float> lightPos;
    vector<float> lightColor;
+   Crate *crate;
    Enemy *tmpEnemy;
    int enemyCooldown = ENEMY_COOLDOWN;
    unsigned int count, count2;
@@ -93,11 +100,17 @@ int main() {
    glCullFace(GL_BACK);
    glEnable(GL_CULL_FACE);
 
-   /* Initialize the stage*/
+   /* Initialize the stage and player stats */
    srand(time(NULL));
+   player.score = 0;
+   player.weapon = PISTOL;
    createStage(&walls);
    initLights(&lightPos, &lightColor);
    camera->setBounds(STAGE_SIZE/2.0 - CAM_BUFFER, -STAGE_SIZE/2.0 + CAM_BUFFER, STAGE_SIZE/2.0 - CAM_BUFFER, -STAGE_SIZE/2.0 + CAM_BUFFER);
+
+   crate = new Crate();
+   crate->setPosition(vec3(rand() % (int)(STAGE_SIZE - 2 * CAM_BUFFER) - (STAGE_SIZE / 2.0 - CAM_BUFFER), 0.5,
+      rand() % (int)(STAGE_SIZE - 2 * CAM_BUFFER) - (STAGE_SIZE / 2.0 - CAM_BUFFER)));
 
    /* Game loop */
    while (!window->getShouldClose()) {
@@ -116,7 +129,19 @@ int main() {
          tmpEnemy->setPosition(enemySpawnPts[rand() % SPAWN_PTS]);
          enemies.push_back(tmpEnemy);
          enemyCooldown = ENEMY_COOLDOWN;
+         
       }
+
+      /* Draw the crate */
+      if (crate->isColliding(camera->getEye())) {
+         crate->setPosition(vec3(rand() % (int)(STAGE_SIZE - 2 * CAM_BUFFER) - (STAGE_SIZE / 2.0 - CAM_BUFFER), 0.5,
+            rand() % (int)(STAGE_SIZE - 2 * CAM_BUFFER) - (STAGE_SIZE / 2.0 - CAM_BUFFER)));
+         player.score++;
+         //player.weapon = 
+      }
+      shader->setMaterial(crate->getColor());
+      crate->update();
+      crate->draw(hPos, hNorm, hModelMat);
 
       /* Draw the stage */
       for (count = 0; count < walls.size(); count++) {
@@ -128,7 +153,7 @@ int main() {
          /* Check for collisions with bullets */
          if (enemies[count]->getState() == LIVE) {
             for (count2 = 0; count2 < bullets.size(); count2++) {
-               if (enemies[count]->isColliding(bullets[count2]->getPosition())) {
+               if (enemies[count]->isColliding(bullets[count2])) {
                   delete bullets[count2];
                   bullets.erase(bullets.begin() + count2);
                   count2--;

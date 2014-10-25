@@ -79,6 +79,7 @@
   <ItemGroup>
     <ClCompile Include="bullet.cpp" />
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="crate.cpp" />
     <ClCompile Include="cube.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="geom.cpp" />
