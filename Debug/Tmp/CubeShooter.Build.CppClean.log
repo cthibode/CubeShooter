@@ -3,7 +3,6 @@ b:\vsprojects\cubeshooter\debug\tmp\vc120.idb
 b:\vsprojects\cubeshooter\debug\tmp\bullet.obj
 b:\vsprojects\cubeshooter\debug\tmp\camera.obj
 b:\vsprojects\cubeshooter\debug\tmp\cube.obj
-b:\vsprojects\cubeshooter\debug\tmp\enemy.obj
 b:\vsprojects\cubeshooter\debug\tmp\geom.obj
 b:\vsprojects\cubeshooter\debug\tmp\glslhelper.obj
 b:\vsprojects\cubeshooter\debug\tmp\main.obj
@@ -11,6 +10,7 @@ b:\vsprojects\cubeshooter\debug\tmp\shader.obj
 b:\vsprojects\cubeshooter\debug\tmp\square.obj
 b:\vsprojects\cubeshooter\debug\tmp\wall.obj
 b:\vsprojects\cubeshooter\debug\tmp\window.obj
+b:\vsprojects\cubeshooter\debug\tmp\enemy.obj
 b:\vsprojects\cubeshooter\debug\cubeshooter.ilk
 b:\vsprojects\cubeshooter\debug\cubeshooter.exe
 b:\vsprojects\cubeshooter\debug\cubeshooter.pdb

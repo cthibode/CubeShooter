@@ -12,6 +12,7 @@ class Geom {
       void setScale(vec3 sca);
       void setRotation(float pitch, float roll, float yaw);
       void setColor(Color col);
+      vec3 getPosition();
       Color getColor();
       
    protected:
@@ -75,6 +76,9 @@ class Enemy : public Cube {
       Enemy();
       ~Enemy();
       void update(vec3 destination);
+      bool reduceHealth();
+      bool isColliding(vec3 point);
+      EnemyState getState();
 
    private:
       float age;
@@ -92,9 +96,13 @@ class Bullet : public Cube {
       Bullet();
       ~Bullet();
       void align(vec3 target);
+      void setBounds(float xPos, float xNeg, float yPos, float yNeg, float zPos, float zNeg);
       void update();
+      bool shouldRemove();
 
    private:
       vec3 direction;
+      float xPosBound, xNegBound, yPosBound, yNegBound, zPosBound, zNegBound;
       float speed;
+      int life;
 };

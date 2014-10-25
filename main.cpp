@@ -18,6 +18,7 @@ void handleKeyboardInput(Window *window, Camera *camera);
 void handleMouseInput(Window *window, Camera *camera, vector<Bullet*> *bullets);
 void createStage(vector<Wall*> *walls);
 void initLights(vector<float> *lightPos, vector<float> *lightColor);
+void keepFPS(double fps);
 
 int main() {
    Window *window = new Window(1920, 1080);
@@ -28,7 +29,7 @@ int main() {
    vector<Bullet*> bullets;
    vector<float> lightPos;
    vector<float> lightColor;
-   unsigned int count;
+   unsigned int count, count2;
 
    GLint hPos, hNorm;
    GLint hModelMat, hViewMat, hProjMat;
@@ -87,6 +88,7 @@ int main() {
 
    /* Game loop */
    while (!window->getShouldClose()) {
+      keepFPS(60);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
       handleKeyboardInput(window, camera);
@@ -95,21 +97,42 @@ int main() {
       camera->setCamPos(hCamPos);
       window->setProjMatrix(hProjMat);
 
+      /* Draw the stage */
       for (count = 0; count < walls.size(); count++) {
          shader->setMaterial(walls[count]->getColor());
          walls[count]->draw(hPos, hNorm, hModelMat);
       }
+      /* Draw the enemies */
       for (count = 0; count < enemies.size(); count++) {
+         /* Check for collisions with bullets */
+         for (count2 = 0; count2 < bullets.size(); count2++) {
+            if (enemies[count]->isColliding(bullets[count2]->getPosition())) {
+               delete bullets[count2];
+               bullets.erase(bullets.begin() + count2);
+               count2--;
+               if (enemies[count]->reduceHealth())
+                  break;
+            }
+         }
          shader->setMaterial(enemies[count]->getColor());
          enemies[count]->update(camera->getEye());
          enemies[count]->draw(hPos, hNorm, hModelMat);
       }
+      /* Draw the bullets */
       for (count = 0; count < bullets.size(); count++) {
+         if (bullets[count]->shouldRemove()) {
+            delete bullets[count];
+            bullets.erase(bullets.begin() + count);
+            count--;
+            continue;
+         }
+
          shader->setMaterial(bullets[count]->getColor());
          bullets[count]->update();
          bullets[count]->draw(hPos, hNorm, hModelMat);
       }
       
+      /* Send the light data to the shader */
       glUniform3fv(hLightPos, lightPos.size() / 3, lightPos.data());
       glUniform3fv(hLightColor, lightColor.size() / 3, lightColor.data());
       glUniform1i(hNumLights, lightPos.size() / 3);
@@ -157,6 +180,7 @@ void handleMouseInput(Window *window, Camera *camera, vector<Bullet*> *bullets) 
       newBullet = new Bullet();
       newBullet->setPosition(vec3(camPos.x, camPos.y - 0.2, camPos.z));
       newBullet->align(vec3(lookAtPos.x, lookAtPos.y - 0.2, lookAtPos.z));
+      newBullet->setBounds(STAGE_SIZE/2.0, -STAGE_SIZE/2.0, STAGE_HEIGHT, 0, STAGE_SIZE/2.0, -STAGE_SIZE/2.0);
       bullets->push_back(newBullet);
       bulletCooldown = 30;//Change this later
    }
@@ -226,4 +250,23 @@ void initLights(vector<float> *lightPos, vector<float> *lightColor) {
 
    *lightPos = vector<float>(lp, lp + sizeof(lp) / sizeof(float));
    *lightColor = vector<float>(lc, lc + sizeof(lc) / sizeof(float));
+}
+
+/* Sets an FPS cap*/
+void keepFPS(double fps) {
+   static double prevTime = 0;
+   static double curTime = 0;
+   double diff;
+
+   curTime = glfwGetTime();
+   diff = curTime - prevTime;
+   prevTime = curTime;
+
+   if (diff < 1.0 / fps) {
+      #ifdef _WIN32
+      Sleep((1.0 / fps - diff) * 1000);
+      #else
+      usleep((1.0 / fps - diff) * 1000000);
+      #endif
+   }
 }

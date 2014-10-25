@@ -71,6 +71,10 @@ void Geom::setColor(Color col) {
    color = col;
 }
 
+vec3 Geom::getPosition() {
+   return tPosition;
+}
+
 Color Geom::getColor() {
    return color;
 }

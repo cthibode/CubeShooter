@@ -4,15 +4,18 @@
 #ifdef __APPLE__
 #include "GLFW/glfw3.h"
 #include <OPENGL/gl.h>
+#include <unistd.h>
 #endif
 
 #ifdef __unix__
 #include "GLFW/glfw3.h"
+#include <unistd.h>
 #endif
 
 #ifdef _WIN32
 #include <GL/glew.h>
 #include "GLFW/glfw3.h"
+#include <Windows.h>
 
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "opengl32.lib")
