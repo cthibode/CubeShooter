@@ -1,11 +1,34 @@
 #include "geom.h"
 
-Bullet::Bullet() : Cube() {
-   tScale = vec3(0.02, 0.02, 0.2);
-   color = GLOW_YELLOW;
-   radius = 0.2;
-   speed = 0.3;
-   life = 120;
+Bullet::Bullet(Weapon weapon) : Cube() {
+   assert(weapon != END);
+   if (weapon == PISTOL) {
+      type = PISTOL;
+      tScale = vec3(0.02, 0.02, 0.2);
+      color = GLOW_YELLOW;
+      radius = 0.2;
+      speed = 0.3;
+      cooldown = 30;
+      life = 120;
+   }
+   else if (weapon == MACHINE) {
+      type = MACHINE;
+      tScale = vec3(0.02, 0.02, 0.2);
+      color = GLOW_RED;
+      radius = 0.2;
+      speed = 0.3;
+      cooldown = 5;
+      life = 90;
+   }
+   else if (weapon == SHOTGUN) {
+      type = SHOTGUN;
+      tScale = vec3(0.02, 0.02, 0.2);
+      color = GLOW_TEAL;
+      radius = 0.2;
+      speed = 0.5;
+      cooldown = 50;
+      life = 20;
+   }
 
    direction = vec3(0);
    xPosBound = xNegBound = yPosBound = yNegBound = zPosBound = zNegBound = 100;
@@ -52,4 +75,12 @@ bool Bullet::shouldRemove() {
       ret = true;
 
    return ret;
+}
+
+int Bullet::getCooldown() {
+   return cooldown;
+}
+
+Weapon Bullet::getType() {
+   return type;
 }

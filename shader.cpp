@@ -109,6 +109,20 @@ void Shader::setMaterial(Color color) {
          glUniform1f(h_uMatShine, 1.0f);
          glUniform1i(h_uShadeMode, AMBIENT);
          break;
+      case GLOW_RED:
+         glUniform3f(h_uMatDif, 1.0f, 0.0f, 0.0f);
+         glUniform3f(h_uMatSpec, 1.0f, 0.0f, 0.0f);
+         glUniform3f(h_uMatAmb, 1.0f, 0.0f, 0.0f);
+         glUniform1f(h_uMatShine, 1.0f);
+         glUniform1i(h_uShadeMode, AMBIENT);
+         break;
+      case GLOW_TEAL:
+         glUniform3f(h_uMatDif, 0.0f, 1.0f, 1.0f);
+         glUniform3f(h_uMatSpec, 0.0f, 1.0f, 1.0f);
+         glUniform3f(h_uMatAmb, 0.0f, 1.0f, 1.0f);
+         glUniform1f(h_uMatShine, 1.0f);
+         glUniform1i(h_uShadeMode, AMBIENT);
+         break;
    }
 }
 

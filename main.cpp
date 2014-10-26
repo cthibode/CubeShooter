@@ -24,7 +24,7 @@ typedef struct Player {
 };
 
 void handleKeyboardInput(Window *window, Camera *camera);
-void handleMouseInput(Window *window, Camera *camera, vector<Bullet*> *bullets);
+void handleMouseInput(Window *window, Camera *camera, vector<Bullet*> *bullets, int *bulletCooldown, Weapon bulletType);
 void createStage(vector<Wall*> *walls);
 void initLights(vector<float> *lightPos, vector<float> *lightColor, vec3 crateLightPos);
 void keepFPS(double fps);
@@ -41,7 +41,9 @@ int main() {
    vector<float> lightColor;
    Crate *crate;
    Enemy *tmpEnemy;
+   Weapon tmpWeapon;
    int enemyCooldown = ENEMY_COOLDOWN;
+   int bulletCooldown = 0;
    unsigned int count, count2;
 
    GLint hPos, hNorm;
@@ -120,7 +122,7 @@ int main() {
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
       handleKeyboardInput(window, camera);
-      handleMouseInput(window, camera, &bullets);
+      handleMouseInput(window, camera, &bullets, &bulletCooldown, player.weapon);
       camera->setView(hViewMat);
       camera->setCamPos(hCamPos);
       window->setProjMatrix(hProjMat);
@@ -131,18 +133,24 @@ int main() {
          tmpEnemy->setPosition(enemySpawnPts[rand() % SPAWN_PTS]);
          enemies.push_back(tmpEnemy);
          enemyCooldown = ENEMY_COOLDOWN;
-         
       }
 
       /* Draw the crate */
+      if (bulletCooldown > 0)
+         bulletCooldown--;
       if (crate->isColliding(camera->getEye())) {
          crate->setPosition(vec3(rand() % (int)(STAGE_SIZE - 2 * CAM_BUFFER) - (STAGE_SIZE / 2.0 - CAM_BUFFER), 0.5,
             rand() % (int)(STAGE_SIZE - 2 * CAM_BUFFER) - (STAGE_SIZE / 2.0 - CAM_BUFFER)));
+         /* MOVE THIS STUFF INTO THE LIGHT CLASS */
          lightPos[MIN_LIGHTS * 3 - 3] = crate->getPosition().x;
          lightPos[MIN_LIGHTS * 3 - 2] = crate->getPosition().y + 0.5;
          lightPos[MIN_LIGHTS * 3 - 1] = crate->getPosition().z;
          player.score++;
-         //player.weapon = 
+         do {
+            tmpWeapon = Weapon(rand() % END);
+         } while (tmpWeapon == player.weapon);
+         player.weapon = tmpWeapon;
+         bulletCooldown = 0;
       }
       shader->setMaterial(crate->getColor());
       crate->update();
@@ -167,7 +175,7 @@ int main() {
                }
             }
          }
-
+         /* Remove enemy if dead */
          enemies[count]->update(camera->getEye());
          if (enemies[count]->getState() == DEAD) {
             delete enemies[count];
@@ -191,15 +199,27 @@ int main() {
          bullets[count]->update();
          bullets[count]->draw(hPos, hNorm, hModelMat);
 
-         lightPos.push_back(bullets[count]->getPosition().x);
-         lightPos.push_back(bullets[count]->getPosition().y);
-         lightPos.push_back(bullets[count]->getPosition().z);
-         lightColor.push_back(1);
-         lightColor.push_back(1);
-         lightColor.push_back(0);
+         /* Add bullet lights - MOVE THIS INTO THE LIGHT CLASS */
+         vec3 bulletColor;
+         if (bullets[count]->getType() == PISTOL)
+            bulletColor = vec3(1, 1, 0);
+         else if (bullets[count]->getType() == MACHINE)
+            bulletColor = vec3(1, 0, 0);
+         else if (bullets[count]->getType() == SHOTGUN)
+            bulletColor = vec3(0, 1, 1);
+
+         if ((int)count > (int)(bullets.size() - (MAX_LIGHTS - MIN_LIGHTS) - 1)) {
+            assert(lightPos.size() < MAX_LIGHTS * 3);
+            lightPos.push_back(bullets[count]->getPosition().x);
+            lightPos.push_back(bullets[count]->getPosition().y);
+            lightPos.push_back(bullets[count]->getPosition().z);
+            lightColor.push_back(bulletColor.r);
+            lightColor.push_back(bulletColor.g);
+            lightColor.push_back(bulletColor.b);
+         }
       }
       
-      /* Send the light data to the shader */
+      /* Send the light data to the shader MOVE TO LIGHT CLASS */
       glUniform3fv(hLightPos, lightPos.size() / 3, lightPos.data());
       glUniform3fv(hLightColor, lightColor.size() / 3, lightColor.data());
       glUniform1i(hNumLights, lightPos.size() / 3);
@@ -230,8 +250,7 @@ void handleKeyboardInput(Window *window, Camera *camera) {
 }
 
 /* Check for mouse movement and clicks and respond accordingly */
-void handleMouseInput(Window *window, Camera *camera, vector<Bullet*> *bullets) {
-   static int bulletCooldown = 0;
+void handleMouseInput(Window *window, Camera *camera, vector<Bullet*> *bullets, int *bulletCooldown, Weapon bulletType) {
    int dx, dy, width, height;
    Bullet *newBullet;
    vec3 camPos, lookAtPos;
@@ -240,20 +259,29 @@ void handleMouseInput(Window *window, Camera *camera, vector<Bullet*> *bullets) 
    window->getDimensions(&width, &height);
    camera->moveLookAt(dx, dy, width, height);
 
-   if (bulletCooldown > 0)
-      bulletCooldown--;
-   if (bulletCooldown <= 0 && window->isMousePressed(GLFW_MOUSE_BUTTON_LEFT)) {
+   if (*bulletCooldown <= 0 && window->isMousePressed(GLFW_MOUSE_BUTTON_LEFT)) {
       // Add options for other weapon types here =================
       camPos = camera->getEye();
       lookAtPos = camera->getLookAt();
-      newBullet = new Bullet();
-      newBullet->setPosition(vec3(camPos.x, camPos.y - 0.2, camPos.z));
-      newBullet->align(vec3(lookAtPos.x, lookAtPos.y - 0.2, lookAtPos.z));
-      newBullet->setBounds(STAGE_SIZE/2.0, -STAGE_SIZE/2.0, STAGE_HEIGHT, 0, STAGE_SIZE/2.0, -STAGE_SIZE/2.0);
-      bullets->push_back(newBullet);
-      bulletCooldown = 30;//Change this later
+      if (bulletType == SHOTGUN) {
+         for (int count = 0; count < 8; count++) {
+            newBullet = new Bullet(bulletType);
+            newBullet->setPosition(vec3(camPos.x, camPos.y - 0.2, camPos.z));
+            newBullet->align(vec3(lookAtPos.x + (rand() % 100 / 400.0 - 0.125), lookAtPos.y - 0.2 + (rand() % 100 / 400.0 - 0.125),
+                                  lookAtPos.z + (rand() % 100 / 400.0 - 0.125)));
+            newBullet->setBounds(STAGE_SIZE / 2.0, -STAGE_SIZE / 2.0, STAGE_HEIGHT, 0, STAGE_SIZE / 2.0, -STAGE_SIZE / 2.0);
+            bullets->push_back(newBullet);
+         }
+      }
+      else {
+         newBullet = new Bullet(bulletType);
+         newBullet->setPosition(vec3(camPos.x, camPos.y - 0.2, camPos.z));
+         newBullet->align(vec3(lookAtPos.x, lookAtPos.y - 0.2, lookAtPos.z));
+         newBullet->setBounds(STAGE_SIZE/2.0, -STAGE_SIZE/2.0, STAGE_HEIGHT, 0, STAGE_SIZE/2.0, -STAGE_SIZE/2.0);
+         bullets->push_back(newBullet);
+      }
+      *bulletCooldown = newBullet->getCooldown();
    }
-      
 }
 
 /* Initialize the stage by adding the walls */

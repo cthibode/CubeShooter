@@ -2,7 +2,7 @@
 #include "main.h" 
 
 enum EnemyState {SPAWN, LIVE, DIE, DEAD};
-enum Weapon {PISTOL, MACHINE, SHOTGUN};
+enum Weapon {PISTOL, MACHINE, SHOTGUN, END};
 
 /* Parent class for all shapes */
 class Geom {
@@ -97,17 +97,21 @@ class Enemy : public Cube {
 /* A Cube that hits and eliminates enemies */
 class Bullet : public Cube {
    public:
-      Bullet();
+      Bullet(Weapon weapon);
       ~Bullet();
       void align(vec3 target);
       void setBounds(float xPos, float xNeg, float yPos, float yNeg, float zPos, float zNeg);
       void update();
       bool shouldRemove();
+      int getCooldown();
+      Weapon getType();
 
    private:
+      Weapon type;
       vec3 direction;
       float xPosBound, xNegBound, yPosBound, yNegBound, zPosBound, zNegBound;
       float speed;
+      int cooldown;
       int life;
 };
 
