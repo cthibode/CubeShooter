@@ -5,7 +5,7 @@ Bullet::Bullet() : Cube() {
    color = GLOW_YELLOW;
    radius = 0.2;
    speed = 0.3;
-   life = 100;
+   life = 120;
 
    direction = vec3(0);
    xPosBound = xNegBound = yPosBound = yNegBound = zPosBound = zNegBound = 100;

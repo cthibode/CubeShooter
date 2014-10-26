@@ -1,5 +1,5 @@
 #define MAX_LIGHTS 15
-#define MIN_LIGHTS 5
+#define MIN_LIGHTS 6
 
 struct Material {
    vec3 dColor;

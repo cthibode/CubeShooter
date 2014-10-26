@@ -16,7 +16,7 @@
 #define SPAWN_BUFFER 2
 #define SPAWN_PTS 8
 #define MAX_LIGHTS 15
-#define MIN_LIGHTS 5
+#define MIN_LIGHTS 6
 
 typedef struct Player {
    Weapon weapon;
@@ -26,7 +26,7 @@ typedef struct Player {
 void handleKeyboardInput(Window *window, Camera *camera);
 void handleMouseInput(Window *window, Camera *camera, vector<Bullet*> *bullets);
 void createStage(vector<Wall*> *walls);
-void initLights(vector<float> *lightPos, vector<float> *lightColor);
+void initLights(vector<float> *lightPos, vector<float> *lightColor, vec3 crateLightPos);
 void keepFPS(double fps);
 
 int main() {
@@ -102,15 +102,17 @@ int main() {
 
    /* Initialize the stage and player stats */
    srand(time(NULL));
-   player.score = 0;
-   player.weapon = PISTOL;
-   createStage(&walls);
-   initLights(&lightPos, &lightColor);
-   camera->setBounds(STAGE_SIZE/2.0 - CAM_BUFFER, -STAGE_SIZE/2.0 + CAM_BUFFER, STAGE_SIZE/2.0 - CAM_BUFFER, -STAGE_SIZE/2.0 + CAM_BUFFER);
 
    crate = new Crate();
    crate->setPosition(vec3(rand() % (int)(STAGE_SIZE - 2 * CAM_BUFFER) - (STAGE_SIZE / 2.0 - CAM_BUFFER), 0.5,
       rand() % (int)(STAGE_SIZE - 2 * CAM_BUFFER) - (STAGE_SIZE / 2.0 - CAM_BUFFER)));
+
+   player.score = 0;
+   player.weapon = PISTOL;
+
+   createStage(&walls);
+   initLights(&lightPos, &lightColor, vec3(crate->getPosition().x, crate->getPosition().y + 0.5, crate->getPosition().z));
+   camera->setBounds(STAGE_SIZE/2.0 - CAM_BUFFER, -STAGE_SIZE/2.0 + CAM_BUFFER, STAGE_SIZE/2.0 - CAM_BUFFER, -STAGE_SIZE/2.0 + CAM_BUFFER);
 
    /* Game loop */
    while (!window->getShouldClose()) {
@@ -136,6 +138,9 @@ int main() {
       if (crate->isColliding(camera->getEye())) {
          crate->setPosition(vec3(rand() % (int)(STAGE_SIZE - 2 * CAM_BUFFER) - (STAGE_SIZE / 2.0 - CAM_BUFFER), 0.5,
             rand() % (int)(STAGE_SIZE - 2 * CAM_BUFFER) - (STAGE_SIZE / 2.0 - CAM_BUFFER)));
+         lightPos[MIN_LIGHTS * 3 - 3] = crate->getPosition().x;
+         lightPos[MIN_LIGHTS * 3 - 2] = crate->getPosition().y + 0.5;
+         lightPos[MIN_LIGHTS * 3 - 1] = crate->getPosition().z;
          player.score++;
          //player.weapon = 
       }
@@ -295,21 +300,32 @@ void createStage(vector<Wall*> *walls) {
    walls->push_back(temp);
 }
 
-void initLights(vector<float> *lightPos, vector<float> *lightColor) {
+void initLights(vector<float> *lightPos, vector<float> *lightColor, vec3 crateLightPos) {
    float lp[] = {
       0, STAGE_HEIGHT/2.0, -STAGE_SIZE/2.0,
       0, STAGE_HEIGHT/2.0, STAGE_SIZE/2.0,
       -STAGE_SIZE/2.0, STAGE_HEIGHT/2.0, 0,
       STAGE_SIZE/2.0, STAGE_HEIGHT/2.0, 0,
-      0, STAGE_HEIGHT, 0
+      0, STAGE_HEIGHT, 0,
+      crateLightPos.x, crateLightPos.y, crateLightPos.z
    };
+
+   //float lp[] = {
+   //   STAGE_SIZE / 4.0, STAGE_HEIGHT / 2.0, -STAGE_SIZE / 4.0,
+   //   -STAGE_SIZE / 4.0, STAGE_HEIGHT / 2.0, STAGE_SIZE / 4.0,
+   //   -STAGE_SIZE / 4.0, STAGE_HEIGHT / 2.0, -STAGE_SIZE / 4.0,
+   //   STAGE_SIZE / 4.0, STAGE_HEIGHT / 2.0, STAGE_SIZE / 4.0,
+   //   0, STAGE_HEIGHT / 2.0, 0,
+   //   crateLightPos.x, crateLightPos.y, crateLightPos.z
+   //};
 
    float lc[] = {
       0, 1, 0,
       0, 1, 0,
       1, 0, 1,
       1, 0, 1,
-      0, 0, 1
+      0, 0, 1,
+      1, 1, 1
    };
 
    *lightPos = vector<float>(lp, lp + sizeof(lp) / sizeof(float));
