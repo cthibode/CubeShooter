@@ -21,10 +21,10 @@ void Light::initLights(vec3 crateLightPos, float stageSize, float stageHeight) {
    //};
 
    float lp[] = {
-      stageSize / 4.0, stageHeight, -stageSize / 4.0,
-      -stageSize / 4.0, stageHeight, stageSize / 4.0,
-      -stageSize / 4.0, stageHeight, -stageSize / 4.0,
-      stageSize / 4.0, stageHeight, stageSize / 4.0,
+      stageSize / 3.0, stageHeight, 0,
+      -stageSize / 3.0, stageHeight, 0,
+      0, stageHeight, stageSize / 3.0,
+      0, stageHeight, -stageSize / 3.0,
       0, stageHeight, 0,
       crateLightPos.x, crateLightPos.y, crateLightPos.z
    };
@@ -43,7 +43,7 @@ void Light::initLights(vec3 crateLightPos, float stageSize, float stageHeight) {
       1, 0, 1,
       0, 0, 1, 
       0, 0, 1,
-      0, 0, 0,
+      0, 0, 0.5,
       1, 1, 1
    };
 
@@ -100,24 +100,62 @@ void Light::updateCrateLight(vec3 newPos) {
    lightPos[minLights * 3 - 1] = newPos.z;
 }
 
-/* Move the stage lights */
+/* Move and update the color of the stage lights */
 void Light::updateStageLights() {
    static float angle = 0;
-   static float radius = 10;
+   static float radius = lightPos[0];
+   static float const maxRad = lightPos[0];
+   static bool angDecr = false;
    static bool radDecr = true;
+   static int colorIndex = 0;
+
+   static vec3 const colors[] = {
+      vec3(1, 0, 1), vec3(0, 0, 1), vec3(0, 0, .5),
+      vec3(1, 1, 0), vec3(1, 0, 1), vec3(0.5, 0, 0.5),
+      vec3(0, 1, 1), vec3(0, 0, 1), vec3(0, 0.5, 0.5),
+      vec3(1, 0, 0), vec3(0.5, 0, 1), vec3(0.5, 0, 0),
+      vec3(0, 1, 1), vec3(0, 1, 0), vec3(0, 0.5, 0),
+      vec3(1, 1, 0), vec3(1, 0.5, 0), vec3(0.5, 0.5, 0),
+   };
+
    lightPos[0] = radius * cos(DEG_TO_RAD(angle));
    lightPos[2] = radius * sin(DEG_TO_RAD(angle));
-   lightPos[3] = radius * cos(DEG_TO_RAD(angle + 180));
-   lightPos[5] = radius * sin(DEG_TO_RAD(angle + 180));
-   lightPos[6] = radius * cos(DEG_TO_RAD(angle + 90));
-   lightPos[8] = radius * sin(DEG_TO_RAD(angle + 90));
-   lightPos[9] = radius * cos(DEG_TO_RAD(angle - 90));
-   lightPos[11] = radius * sin(DEG_TO_RAD(angle - 90));
-   angle++;
+   lightPos[1*3] = radius * cos(DEG_TO_RAD(angle + 180));
+   lightPos[1*3 + 2] = radius * sin(DEG_TO_RAD(angle + 180));
+   lightPos[2*3] = radius * cos(DEG_TO_RAD(angle + 90));
+   lightPos[2*3 + 2] = radius * sin(DEG_TO_RAD(angle + 90));
+   lightPos[3*3] = radius * cos(DEG_TO_RAD(angle - 90));
+   lightPos[3*3 + 2] = radius * sin(DEG_TO_RAD(angle - 90));
+
+   angle = angDecr ? angle - 1 : angle + 1;
+   if (angle >= 500 || angle <= -500)
+      angDecr = !angDecr;
 
    radius = radDecr ? radius - 0.1 : radius + 0.1;
-   if (radius >= 10 || radius <= -10)
+   if (radius >= maxRad || radius <= 0) {
       radDecr = !radDecr;
+      
+      colorIndex += 3;
+      if (colorIndex >= sizeof(colors) / sizeof(vec3))
+         colorIndex = 0;
+      lightColor[0] = lightColor[3] = colors[colorIndex].r;
+      lightColor[1] = lightColor[3 + 1] = colors[colorIndex].g;
+      lightColor[2] = lightColor[3 + 2] = colors[colorIndex].b;
+      lightColor[2*3] = lightColor[3*3] = colors[colorIndex + 1].r;
+      lightColor[2*3 + 1] = lightColor[3*3 + 1] = colors[colorIndex + 1].g;
+      lightColor[2*3 + 2] = lightColor[3*3 + 2] = colors[colorIndex + 1].b;
+      lightColor[4*3] = colors[colorIndex + 2].r;
+      lightColor[4*3 + 1] = colors[colorIndex + 2].g;
+      lightColor[4*3 + 2] = colors[colorIndex + 2].b;
+   }
+   else if (abs(radius - maxRad / 2.0) < 0.1) {
+      lightColor[0] = lightColor[3] = colors[colorIndex + 1].r;
+      lightColor[1] = lightColor[3 + 1] = colors[colorIndex + 1].g;
+      lightColor[2] = lightColor[3 + 2] = colors[colorIndex + 1].b;
+      lightColor[2 * 3] = lightColor[3 * 3] = colors[colorIndex].r;
+      lightColor[2 * 3 + 1] = lightColor[3 * 3 + 1] = colors[colorIndex].g;
+      lightColor[2 * 3 + 2] = lightColor[3 * 3 + 2] = colors[colorIndex].b;
+   }
 }
 
 int Light::getMinLights() {
