@@ -1,8 +1,9 @@
 #include <vector>
 #include "main.h" 
 
+enum EnemyType {NORMAL, BIG, HIGH_JUMP, ET_END};
 enum EnemyState {SPAWN, LIVE, DIE, DEAD};
-enum Weapon {PISTOL, MACHINE, SHOTGUN, END};
+enum Weapon {PISTOL, MACHINE, SHOTGUN, W_END};
 
 /* Parent class for all shapes */
 class Geom {
@@ -77,7 +78,7 @@ class Wall : public Square {
 /* A Cube that tries to attack the player */
 class Enemy : public Cube {
    public:
-      Enemy();
+      Enemy(EnemyType enemyType);
       ~Enemy();
       void update(vec3 destination);
       bool reduceHealth();
@@ -85,6 +86,7 @@ class Enemy : public Cube {
 
    private:
       float age;
+      EnemyType type;
       EnemyState state;
       
       int health;

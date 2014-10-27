@@ -1,13 +1,34 @@
 #include "geom.h"
 
-Enemy::Enemy() : Cube() {
-   /* Normal enemy */
-   size = 1.0;
-   radius = 0.7;
-   health = 2;
-   jumpHeight = 0.5;
-   jumpSpeed = 0.1;
-   moveSpeed = 0.02;
+Enemy::Enemy(EnemyType enemyType) : Cube() {
+   assert(enemyType != ET_END);
+   if (enemyType == NORMAL) {
+      type = NORMAL;
+      size = 1.0;
+      radius = 0.7;
+      health = 2;
+      jumpHeight = 0.5;
+      jumpSpeed = 0.1;
+      moveSpeed = 0.02;
+   }
+   else if (enemyType == BIG) {
+      type = BIG;
+      size = 2.0;
+      radius = 1.2;
+      health = 5;
+      jumpHeight = 1.0;
+      jumpSpeed = 0.08;
+      moveSpeed = 0.04;
+   }
+   else if (enemyType == HIGH_JUMP) {
+      type = HIGH_JUMP;
+      size = 0.7;
+      radius = 0.55;
+      health = 2;
+      jumpHeight = 3.0;
+      jumpSpeed = 0.05;
+      moveSpeed = 0.04;
+   }
 
    /* Common for all enemies */
    tScale = vec3(0.1);
@@ -28,9 +49,14 @@ void Enemy::update(vec3 destination) {
       if (moveVec.z == 0)
          moveVec.z = 0.001;
       tRotYaw = RAD_TO_DEG(atan(moveVec.x / moveVec.z));
-      tPosition.x += moveVec.x * moveSpeed;
-      tPosition.y = tScale.y / 2.0 + abs(sin(age)) * jumpHeight;
-      tPosition.z += moveVec.z * moveSpeed;
+      if (type == BIG && sin(age) < 0) {
+         tPosition.y = tScale.y / 2.0;
+      }
+      else {
+         tPosition.x += moveVec.x * moveSpeed;
+         tPosition.y = tScale.y / 2.0 + abs(sin(age)) * jumpHeight;
+         tPosition.z += moveVec.z * moveSpeed;
+      }
       age += jumpSpeed;
    }
    else if (state == SPAWN) {
@@ -43,6 +69,7 @@ void Enemy::update(vec3 destination) {
          tScale = vec3(size);
          tRotPitch = tRotRoll = tRotYaw = 0;
          state = LIVE;
+         age = 0;
       }
    }
    else if (state == DIE) {

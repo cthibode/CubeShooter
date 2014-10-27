@@ -126,7 +126,7 @@ int main() {
 
       /* Add enemies */
       if (--enemyCooldown <= 0) {
-         tmpEnemy = new Enemy();
+         tmpEnemy = new Enemy(EnemyType(rand() % ET_END));
          tmpEnemy->setPosition(enemySpawnPts[rand() % SPAWN_PTS]);
          enemies.push_back(tmpEnemy);
          enemyCooldown = ENEMY_COOLDOWN;
@@ -142,7 +142,7 @@ int main() {
          light->updateCrateLight(crate->getPosition());
          player.score++;
          do {
-            tmpWeapon = Weapon(rand() % END);
+            tmpWeapon = Weapon(rand() % W_END);
          } while (tmpWeapon == player.weapon);
          player.weapon = tmpWeapon;
       }

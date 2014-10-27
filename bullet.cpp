@@ -1,7 +1,7 @@
 #include "geom.h"
 
 Bullet::Bullet(Weapon weapon) : Cube() {
-   assert(weapon != END);
+   assert(weapon != W_END);
    if (weapon == PISTOL) {
       type = PISTOL;
       tScale = vec3(0.02, 0.02, 0.2);
