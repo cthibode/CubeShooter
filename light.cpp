@@ -11,15 +11,6 @@ Light::~Light() {
 
 /* Initialize the position and color vectors with the stage and crate lights */
 void Light::initLights(vec3 crateLightPos, float stageSize, float stageHeight) {
-   //float lp[] = {
-   //   0, stageHeight / 2.0, -stageSize / 2.0,
-   //   0, stageHeight / 2.0, stageSize / 2.0,
-   //   -stageSize / 2.0, stageHeight / 2.0, 0,
-   //   stageSize / 2.0, stageHeight / 2.0, 0,
-   //   0, stageHeight, 0,
-   //   crateLightPos.x, crateLightPos.y, crateLightPos.z
-   //};
-
    float lp[] = {
       stageSize / 3.0, stageHeight, 0,
       -stageSize / 3.0, stageHeight, 0,
@@ -28,15 +19,6 @@ void Light::initLights(vec3 crateLightPos, float stageSize, float stageHeight) {
       0, stageHeight, 0,
       crateLightPos.x, crateLightPos.y, crateLightPos.z
    };
-
-   //float lc[] = {
-   //   0, 1, 0,
-   //   0, 1, 0,
-   //   1, 0, 1,
-   //   1, 0, 1,
-   //   0, 0, 1,
-   //   1, 1, 1
-   //};
 
    float lc[] {
       1, 0, 1,

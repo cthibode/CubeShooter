@@ -118,6 +118,7 @@ int main() {
       keepFPS(60);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+      camera->updateJump();
       handleKeyboardInput(window, camera);
       handleMouseInput(window, camera, &bullets, &bulletCooldown, player.weapon);
       camera->setShaderView(hViewMat);
@@ -200,7 +201,7 @@ int main() {
             light->addLight(bullets[count]->getPosition(), bullets[count]->getColor());
       }
       
-      /* Send the light data to the shader */
+      /* Update the stage lights and send to the shader */
       light->updateStageLights();
       light->setShaderLights(hLightPos, hLightColor, hNumLights);
       light->resetLights();
@@ -224,6 +225,8 @@ void handleKeyboardInput(Window *window, Camera *camera) {
       camera->moveLR(CAM_SPEED);
    if (window->isKeyPressed(GLFW_KEY_A))
       camera->moveLR(-CAM_SPEED);
+   if (window->isKeyPressed(GLFW_KEY_SPACE))
+      camera->startJump();
    if (window->isKeyPressed(GLFW_KEY_ESCAPE))
       window->setShouldClose(true);
 }

@@ -4,6 +4,7 @@ Camera::Camera() : upVector(vec3(0, 1, 0)) {
    eye = vec3(0, 1, 0);
    lookAt = vec3(0, 1, -1);
    xPosBound = xNegBound = zPosBound = zNegBound = NULL;
+   isJumping = false;
 }
 
 Camera::~Camera() {
@@ -85,6 +86,26 @@ void Camera::moveLookAt(int dx, int dy, int width, int height) {
    lookAt.x = eye.x + cos(pitchAng) * cos(yawAng);
    lookAt.y = eye.y + sin(pitchAng);
    lookAt.z = eye.z + cos(pitchAng) * cos(PI/2 - yawAng);
+}
+
+/* Change the height of the camera if it is jumping */
+void Camera::updateJump() {
+   static float age = 0;
+
+   if (isJumping) {
+      eye.y = 1 + sin(DEG_TO_RAD(age)) * 0.8;
+      age += 5;
+      if (eye.y < 1) {
+         eye.y = 1;
+         age = 0;
+         isJumping = false;
+      }
+   }
+}
+
+/* Set the flag to perform a jump */
+void Camera::startJump() {
+   isJumping = true;
 }
 
 vec3 Camera::getEye() {
