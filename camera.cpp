@@ -19,12 +19,12 @@ void Camera::setBounds(float xPos, float xNeg, float zPos, float zNeg) {
 }
 
 /* Calculate the view matrix and send to the shader */
-void Camera::setView(GLint viewMatHandle) {
+void Camera::setShaderView(GLint viewMatHandle) {
    mat4 View = glm::lookAt(eye, lookAt, upVector);
    glUniformMatrix4fv(viewMatHandle, 1, GL_FALSE, value_ptr(View));
 }
 
-void Camera::setCamPos(GLint camPosHandle) {
+void Camera::setShaderCamPos(GLint camPosHandle) {
    glUniform3f(camPosHandle, eye.x, eye.y, eye.z);
 }
 

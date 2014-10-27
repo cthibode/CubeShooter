@@ -84,6 +84,7 @@
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="geom.cpp" />
     <ClCompile Include="glslHelper.cpp" />
+    <ClCompile Include="light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="square.cpp" />
@@ -94,6 +95,7 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="geom.h" />
     <ClInclude Include="glslHelper.h" />
+    <ClInclude Include="light.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="window.h" />

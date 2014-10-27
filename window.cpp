@@ -60,7 +60,7 @@ void Window::updateWindow() {
 }
 
 /* Calculate the projection matrix and send to the shader*/
-void Window::setProjMatrix(GLint projMatHandle) {
+void Window::setShaderProjMatrix(GLint projMatHandle) {
    mat4 Projection = perspective(80.0f, (float)width / height, 0.1f, 50.0f);
    glUniformMatrix4fv(projMatHandle, 1, GL_FALSE, value_ptr(Projection));
 }
