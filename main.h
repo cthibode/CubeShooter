@@ -30,8 +30,8 @@ using namespace std;
 using namespace glm;
 
 #define PI 3.14159
-#define RAD_TO_DEG(r) (r * 180/PI)
-#define DEG_TO_RAD(d) (d * PI/180)
+#define RAD_TO_DEG(r) ((r) * 180/PI)
+#define DEG_TO_RAD(d) ((d) * PI/180)
 
 enum Color {GRAY, DARK_GRAY, WHITE, BROWN, GLOW_YELLOW, GLOW_RED, GLOW_TEAL};
 

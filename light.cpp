@@ -11,30 +11,39 @@ Light::~Light() {
 
 /* Initialize the position and color vectors with the stage and crate lights */
 void Light::initLights(vec3 crateLightPos, float stageSize, float stageHeight) {
+   //float lp[] = {
+   //   0, stageHeight / 2.0, -stageSize / 2.0,
+   //   0, stageHeight / 2.0, stageSize / 2.0,
+   //   -stageSize / 2.0, stageHeight / 2.0, 0,
+   //   stageSize / 2.0, stageHeight / 2.0, 0,
+   //   0, stageHeight, 0,
+   //   crateLightPos.x, crateLightPos.y, crateLightPos.z
+   //};
+
    float lp[] = {
-      0, stageHeight / 2.0, -stageSize / 2.0,
-      0, stageHeight / 2.0, stageSize / 2.0,
-      -stageSize / 2.0, stageHeight / 2.0, 0,
-      stageSize / 2.0, stageHeight / 2.0, 0,
+      stageSize / 4.0, stageHeight, -stageSize / 4.0,
+      -stageSize / 4.0, stageHeight, stageSize / 4.0,
+      -stageSize / 4.0, stageHeight, -stageSize / 4.0,
+      stageSize / 4.0, stageHeight, stageSize / 4.0,
       0, stageHeight, 0,
       crateLightPos.x, crateLightPos.y, crateLightPos.z
    };
 
-   //float lp[] = {
-   //   STAGE_SIZE / 4.0, STAGE_HEIGHT / 2.0, -STAGE_SIZE / 4.0,
-   //   -STAGE_SIZE / 4.0, STAGE_HEIGHT / 2.0, STAGE_SIZE / 4.0,
-   //   -STAGE_SIZE / 4.0, STAGE_HEIGHT / 2.0, -STAGE_SIZE / 4.0,
-   //   STAGE_SIZE / 4.0, STAGE_HEIGHT / 2.0, STAGE_SIZE / 4.0,
-   //   0, STAGE_HEIGHT / 2.0, 0,
-   //   crateLightPos.x, crateLightPos.y, crateLightPos.z
+   //float lc[] = {
+   //   0, 1, 0,
+   //   0, 1, 0,
+   //   1, 0, 1,
+   //   1, 0, 1,
+   //   0, 0, 1,
+   //   1, 1, 1
    //};
 
-   float lc[] = {
-      0, 1, 0,
-      0, 1, 0,
+   float lc[] {
       1, 0, 1,
       1, 0, 1,
+      0, 0, 1, 
       0, 0, 1,
+      0, 0, 0,
       1, 1, 1
    };
 
@@ -93,7 +102,22 @@ void Light::updateCrateLight(vec3 newPos) {
 
 /* Move the stage lights */
 void Light::updateStageLights() {
+   static float angle = 0;
+   static float radius = 10;
+   static bool radDecr = true;
+   lightPos[0] = radius * cos(DEG_TO_RAD(angle));
+   lightPos[2] = radius * sin(DEG_TO_RAD(angle));
+   lightPos[3] = radius * cos(DEG_TO_RAD(angle + 180));
+   lightPos[5] = radius * sin(DEG_TO_RAD(angle + 180));
+   lightPos[6] = radius * cos(DEG_TO_RAD(angle + 90));
+   lightPos[8] = radius * sin(DEG_TO_RAD(angle + 90));
+   lightPos[9] = radius * cos(DEG_TO_RAD(angle - 90));
+   lightPos[11] = radius * sin(DEG_TO_RAD(angle - 90));
+   angle++;
 
+   radius = radDecr ? radius - 0.1 : radius + 0.1;
+   if (radius >= 10 || radius <= -10)
+      radDecr = !radDecr;
 }
 
 int Light::getMinLights() {

@@ -38,7 +38,7 @@ void main() {
          angleNH = pow(angleNH, uMat.shine);
 
          if (count < MIN_LIGHTS)
-            attenuation = distance(vPos, uLightPos[count]);
+            attenuation = 0.7 * distance(vPos, uLightPos[count]);
          else
             attenuation = 2 * distance(vPos, uLightPos[count]);
 

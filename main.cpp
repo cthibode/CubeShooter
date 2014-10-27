@@ -201,6 +201,7 @@ int main() {
       }
       
       /* Send the light data to the shader */
+      light->updateStageLights();
       light->setShaderLights(hLightPos, hLightColor, hNumLights);
       light->resetLights();
 
