@@ -33,6 +33,6 @@ using namespace glm;
 #define RAD_TO_DEG(r) ((r) * 180/PI)
 #define DEG_TO_RAD(d) ((d) * PI/180)
 
-enum Color {GRAY, DARK_GRAY, WHITE, BROWN, GLOW_YELLOW, GLOW_RED, GLOW_TEAL};
+enum Color {GRAY, DARK_GRAY, WHITE, BROWN, GLOW_YELLOW, GLOW_RED, GLOW_TEAL, ATTRIB};
 
 #endif

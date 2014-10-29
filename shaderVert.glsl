@@ -1,12 +1,15 @@
 
 attribute vec3 aPosition;
 attribute vec3 aNormal;
+attribute vec4 aColor;
 
 uniform mat4 uModelMatrix;
 uniform mat4 uViewMatrix;
 uniform mat4 uProjMatrix;
+uniform int uShadeMode;
 
 varying vec3 vPos, vNorm;
+varying vec4 vColor;
 
 void main() {
    vec4 transPos, transNorm;
@@ -21,4 +24,5 @@ void main() {
    /* Interpolate the position and normal and send to the fragment shader */
    vPos = vec3(transPos.xyz);
    vNorm = vec3(transNorm.xyz);
+   vColor = aColor;
 }

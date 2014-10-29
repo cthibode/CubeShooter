@@ -16,9 +16,10 @@ uniform int uShadeMode;
 uniform Material uMat;
 
 varying vec3 vPos, vNorm;
+varying vec4 vColor;
 
 void main() {
-   vec3 totalColor = vec3(0);
+   vec4 totalColor = vec4(0, 0, 0, 1);
    vec3 pos, norm, light, view, halfVec;
    float angleNL, angleNH, attenuation;
 
@@ -42,14 +43,18 @@ void main() {
          else
             attenuation = 2 * distance(vPos, uLightPos[count]);
 
-         totalColor += (uLightColor[count] * uMat.dColor * angleNL + uLightColor[count] * uMat.sColor * angleNH + 
-                       uLightColor[count] * uMat.aColor) / attenuation;
+         totalColor.rgb += (uLightColor[count] * uMat.dColor * angleNL + uLightColor[count] * uMat.sColor * angleNH + 
+                           uLightColor[count] * uMat.aColor) / attenuation;
       }
    }
    /* Ambient only */
    else if (uShadeMode == 1) {
-      totalColor = uMat.aColor;
+      totalColor.rgb = uMat.aColor;
+   }
+   /* Particles */
+   else if (uShadeMode == 2) {
+      totalColor = vColor;
    }
 
-   gl_FragColor = vec4(totalColor, 1.0);
+   gl_FragColor = totalColor;//vec4(totalColor, 1.0);
 }

@@ -53,6 +53,8 @@ int Shader::installShader(const GLchar *shaderData, ShaderType type) {
 void Shader::initHandles() {
    h_aPosition = glGetAttribLocation(shadeProg, "aPosition");
    h_aNormal = glGetAttribLocation(shadeProg, "aNormal");
+   h_aColor = glGetAttribLocation(shadeProg, "aColor");
+   h_aPtSize = glGetAttribLocation(shadeProg, "aPtSize");
 
    h_uModelMatrix = glGetUniformLocation(shadeProg, "uModelMatrix");
    h_uViewMatrix = glGetUniformLocation(shadeProg, "uViewMatrix");
@@ -123,6 +125,9 @@ void Shader::setMaterial(Color color) {
          glUniform1f(h_uMatShine, 1.0f);
          glUniform1i(h_uShadeMode, AMBIENT);
          break;
+      case ATTRIB: // Use when color is an attribute
+         glUniform1i(h_uShadeMode, PARTICLE);
+         break;
    }
 }
 
@@ -132,6 +137,14 @@ GLint Shader::getPositionHandle() {
 
 GLint Shader::getNormalHandle() {
    return h_aNormal;
+}
+
+GLint Shader::getColorHandle() {
+   return h_aColor;
+}
+
+GLint Shader::getPtSizeHandle() {
+   return h_aPtSize;
 }
 
 GLint Shader::getModelMatHandle() {

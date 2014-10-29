@@ -8,6 +8,7 @@
 #include "light.h"
 #include "glslHelper.h"
 #include "geom.h"
+#include "particleSystem.h"
 
 #define STAGE_SIZE 30.0f
 #define STAGE_HEIGHT 4.0f
@@ -32,6 +33,7 @@ int main() {
    Shader *shader = new Shader();
    Camera *camera = new Camera();
    Light *light = new Light();
+   ParticleSystem *particleSys = new ParticleSystem();
    Player player;
    vector<Wall*> walls;
    vector<Enemy*> enemies;
@@ -99,6 +101,14 @@ int main() {
    glCullFace(GL_BACK);
    glEnable(GL_CULL_FACE);
 
+   /* Enable transparency */
+   glEnable(GL_BLEND);
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+   /* Initialize particle system */
+   glPointSize(4.0);
+   particleSys->initialize();
+
    /* Initialize the stage and player stats */
    srand(time(NULL));
 
@@ -163,6 +173,7 @@ int main() {
          if (enemies[count]->getState() == LIVE) {
             for (count2 = 0; count2 < bullets.size(); count2++) {
                if (enemies[count]->isColliding(bullets[count2])) {
+                  particleSys->createParticles(bullets[count2]->getPosition(), 50, CONFETTI);
                   delete bullets[count2];
                   bullets.erase(bullets.begin() + count2);
                   count2--;
@@ -200,6 +211,11 @@ int main() {
          if ((int)count > (int)(bullets.size() - (light->getMaxLights() - light->getMinLights()) - 1))
             light->addLight(bullets[count]->getPosition(), bullets[count]->getColor());
       }
+
+      /* Update particles and draw */
+      shader->setMaterial(ATTRIB);
+      particleSys->update();
+      particleSys->draw(hModelMat, hPos, shader->getColorHandle(), shader->getPtSizeHandle());
       
       /* Update the stage lights and send to the shader */
       light->updateStageLights();

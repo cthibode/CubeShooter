@@ -1,7 +1,7 @@
 #include "main.h"
 
 enum ShaderType { VERT, FRAG, GEOM };
-enum ShadeMode { PHONG, AMBIENT };
+enum ShadeMode { PHONG, AMBIENT, PARTICLE };
 
 /* Holds the shader program and shader variable handles */
 class Shader {
@@ -14,6 +14,8 @@ class Shader {
       void setMaterial(Color color);
       GLint getPositionHandle();
       GLint getNormalHandle();
+      GLint getColorHandle();
+      GLint getPtSizeHandle(); // needed?
       GLint getModelMatHandle();
       GLint getViewMatHandle();
       GLint getProjMatHandle();
@@ -27,6 +29,8 @@ class Shader {
 
       GLint h_aPosition;
       GLint h_aNormal;
+      GLint h_aColor;
+      GLint h_aPtSize; /// needed?
       
       GLint h_uModelMatrix;
       GLint h_uViewMatrix;

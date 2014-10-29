@@ -2,34 +2,35 @@
 
 Bullet::Bullet(Weapon weapon) : Cube() {
    assert(weapon != W_END);
-   if (weapon == PISTOL) {
-      type = PISTOL;
-      tScale = vec3(0.02, 0.02, 0.2);
-      color = GLOW_YELLOW;
-      radius = 0.2;
-      speed = 0.3;
-      cooldown = 30;
-      life = 120;
-   }
-   else if (weapon == MACHINE) {
-      type = MACHINE;
-      tScale = vec3(0.02, 0.02, 0.2);
-      color = GLOW_RED;
-      radius = 0.2;
-      speed = 0.3;
-      cooldown = 5;
-      life = 90;
-   }
-   else if (weapon == SHOTGUN) {
-      type = SHOTGUN;
-      tScale = vec3(0.02, 0.02, 0.2);
-      color = GLOW_TEAL;
-      radius = 0.2;
-      speed = 0.5;
-      cooldown = 50;
-      life = 20;
+   switch (weapon) {
+      case PISTOL:
+         tScale = vec3(0.02, 0.02, 0.2);
+         color = GLOW_YELLOW;
+         radius = 0.2;
+         speed = 0.3;
+         cooldown = 30;
+         life = 120;
+         break;
+      case MACHINE:
+         tScale = vec3(0.02, 0.02, 0.2);
+         color = GLOW_RED;
+         radius = 0.2;
+         speed = 0.3;
+         cooldown = 5;
+         life = 90;
+         break;
+      case SHOTGUN:
+         tScale = vec3(0.02, 0.02, 0.2);
+         color = GLOW_TEAL;
+         radius = 0.2;
+         speed = 0.5;
+         cooldown = 50;
+         life = 20;
+         break;
    }
 
+   /* Common for all bullets */
+   type = weapon;
    direction = vec3(0);
    xPosBound = xNegBound = yPosBound = yNegBound = zPosBound = zNegBound = 100;
 }

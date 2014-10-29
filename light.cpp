@@ -102,11 +102,11 @@ void Light::updateStageLights() {
 
    lightPos[0] = radius * cos(DEG_TO_RAD(angle));
    lightPos[2] = radius * sin(DEG_TO_RAD(angle));
-   lightPos[1*3] = radius * cos(DEG_TO_RAD(angle + 180));
+   lightPos[1*3 + 0] = radius * cos(DEG_TO_RAD(angle + 180));
    lightPos[1*3 + 2] = radius * sin(DEG_TO_RAD(angle + 180));
-   lightPos[2*3] = radius * cos(DEG_TO_RAD(angle + 90));
+   lightPos[2*3 + 0] = radius * cos(DEG_TO_RAD(angle + 90));
    lightPos[2*3 + 2] = radius * sin(DEG_TO_RAD(angle + 90));
-   lightPos[3*3] = radius * cos(DEG_TO_RAD(angle - 90));
+   lightPos[3*3 + 0] = radius * cos(DEG_TO_RAD(angle - 90));
    lightPos[3*3 + 2] = radius * sin(DEG_TO_RAD(angle - 90));
 
    angle = angDecr ? angle - 1 : angle + 1;
@@ -120,23 +120,23 @@ void Light::updateStageLights() {
       colorIndex += 3;
       if (colorIndex >= sizeof(colors) / sizeof(vec3))
          colorIndex = 0;
-      lightColor[0] = lightColor[3] = colors[colorIndex].r;
+      lightColor[0] = lightColor[3 + 0] = colors[colorIndex].r;
       lightColor[1] = lightColor[3 + 1] = colors[colorIndex].g;
       lightColor[2] = lightColor[3 + 2] = colors[colorIndex].b;
-      lightColor[2*3] = lightColor[3*3] = colors[colorIndex + 1].r;
+      lightColor[2*3 + 0] = lightColor[3*3 + 0] = colors[colorIndex + 1].r;
       lightColor[2*3 + 1] = lightColor[3*3 + 1] = colors[colorIndex + 1].g;
       lightColor[2*3 + 2] = lightColor[3*3 + 2] = colors[colorIndex + 1].b;
-      lightColor[4*3] = colors[colorIndex + 2].r;
+      lightColor[4*3 + 0] = colors[colorIndex + 2].r;
       lightColor[4*3 + 1] = colors[colorIndex + 2].g;
       lightColor[4*3 + 2] = colors[colorIndex + 2].b;
    }
    else if (abs(radius - maxRad / 2.0) < 0.1) {
-      lightColor[0] = lightColor[3] = colors[colorIndex + 1].r;
+      lightColor[0] = lightColor[3 + 0] = colors[colorIndex + 1].r;
       lightColor[1] = lightColor[3 + 1] = colors[colorIndex + 1].g;
       lightColor[2] = lightColor[3 + 2] = colors[colorIndex + 1].b;
-      lightColor[2 * 3] = lightColor[3 * 3] = colors[colorIndex].r;
-      lightColor[2 * 3 + 1] = lightColor[3 * 3 + 1] = colors[colorIndex].g;
-      lightColor[2 * 3 + 2] = lightColor[3 * 3 + 2] = colors[colorIndex].b;
+      lightColor[2*3 + 0] = lightColor[3*3 + 0] = colors[colorIndex].r;
+      lightColor[2*3 + 1] = lightColor[3*3 + 1] = colors[colorIndex].g;
+      lightColor[2*3 + 2] = lightColor[3*3 + 2] = colors[colorIndex].b;
    }
 }
 

@@ -2,35 +2,35 @@
 
 Enemy::Enemy(EnemyType enemyType) : Cube() {
    assert(enemyType != ET_END);
-   if (enemyType == NORMAL) {
-      type = NORMAL;
-      size = 1.0;
-      radius = 0.7;
-      health = 2;
-      jumpHeight = 0.5;
-      jumpSpeed = 0.1;
-      moveSpeed = 0.02;
-   }
-   else if (enemyType == BIG) {
-      type = BIG;
-      size = 2.0;
-      radius = 1.2;
-      health = 5;
-      jumpHeight = 1.0;
-      jumpSpeed = 0.08;
-      moveSpeed = 0.04;
-   }
-   else if (enemyType == HIGH_JUMP) {
-      type = HIGH_JUMP;
-      size = 0.7;
-      radius = 0.55;
-      health = 2;
-      jumpHeight = 3.0;
-      jumpSpeed = 0.05;
-      moveSpeed = 0.04;
+   switch (enemyType) {
+      case NORMAL:
+         size = 1.0;
+         radius = 0.7;
+         health = 2;
+         jumpHeight = 0.5;
+         jumpSpeed = 0.1;
+         moveSpeed = 0.02;
+         break;
+      case BIG:
+         size = 2.0;
+         radius = 1.2;
+         health = 5;
+         jumpHeight = 1.0;
+         jumpSpeed = 0.08;
+         moveSpeed = 0.04;
+         break;
+      case HIGH_JUMP:
+         size = 0.7;
+         radius = 0.55;
+         health = 2;
+         jumpHeight = 3.0;
+         jumpSpeed = 0.05;
+         moveSpeed = 0.04;
+         break;
    }
 
    /* Common for all enemies */
+   type = enemyType;
    tScale = vec3(0.1);
    color = WHITE;
    age = 0;

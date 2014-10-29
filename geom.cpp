@@ -40,7 +40,6 @@ void Geom::draw(GLint positionHandle, GLint normalHandle, GLint modelMatHandle) 
 
    glDisableVertexAttribArray(positionHandle);
    glDisableVertexAttribArray(normalHandle);
-   
 }
 
 /* (Private) Translate, rotate, and scale the shape */
