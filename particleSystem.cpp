@@ -39,16 +39,25 @@ void ParticleSystem::createParticles(vec3 position, int amount, PartBehavior typ
 
    for (count = 0; count < amount; count++) {
       tmpPart.type = type;
-      tmpPart.position = position;
 
       switch (type) {
          case CONFETTI:
             tmpAng = DEG_TO_RAD(rand() % 360);
             tmpDist = rand() % 100 / 1000.0;
+            tmpPart.position = position;
             tmpPart.color = vec4(rand() % 100 / 100.0, rand() % 100 / 100.0, rand() % 100 / 100.0, 0.7);
             tmpPart.velocity = vec3(cos(tmpAng) * tmpDist, tmpDist, sin(tmpAng) * tmpDist);
             tmpPart.life = 90 + rand() % 20;
             tmpPart.size = 5.0;
+            break;
+         case FLOAT_UP:
+            tmpAng = DEG_TO_RAD(rand() % 360);
+            tmpDist = rand() % 100 / 400.0;
+            tmpPart.position = position + vec3(cos(tmpAng) * tmpDist, 0, sin(tmpAng) * tmpDist);
+            tmpPart.color = vec4(1, 1, 1, 1);
+            tmpPart.velocity = vec3(0, 0.01, 0);
+            tmpPart.life = 500;
+            tmpPart.size = 3.0;
             break;
       }
       
@@ -79,6 +88,9 @@ void ParticleSystem::update() {
                else
                   part->velocity.y -= 0.01;
                break;
+            case FLOAT_UP:
+               part->position += part->velocity;
+               part->color.a -= 0.005;
          }
          part->life--;
 

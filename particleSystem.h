@@ -1,6 +1,6 @@
 #include "main.h"
 
-enum PartBehavior {CONFETTI};
+enum PartBehavior { CONFETTI, FLOAT_UP };
 
 /* Holds the variables needed for each individual particle */
 struct Particle {

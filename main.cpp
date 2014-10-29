@@ -164,6 +164,7 @@ int main() {
          player.weapon = tmpWeapon;
       }
       if (player.alive) {
+         particleSys->createParticles(vec3(crate->getPosition().x, 0, crate->getPosition().z), 1, FLOAT_UP);
          shader->setMaterial(crate->getColor());
          crate->update();
          crate->draw(hPos, hNorm, hModelMat);
