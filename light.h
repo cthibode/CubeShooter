@@ -11,6 +11,7 @@ class Light {
       int addLight(vec3 pos, Color color);
       void updateCrateLight(vec3 newPos);
       void updateStageLights();
+      void updateStageLightsLose();
       int getMinLights();
       int getMaxLights();
 
@@ -18,4 +19,5 @@ class Light {
       vector<float> lightPos;
       vector<float> lightColor;
       int const minLights, maxLights;
+      float stageSize, stageHeight;
 };

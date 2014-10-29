@@ -21,6 +21,7 @@
 typedef struct Player {
    Weapon weapon;
    int score;
+   bool alive;
 };
 
 void handleKeyboardInput(Window *window, Camera *camera);
@@ -45,7 +46,7 @@ int main() {
    int bulletCooldown = 0;
    unsigned int count, count2;
 
-   GLint hPos, hNorm;
+   GLint hPos, hNorm, hColor, hPtSize;
    GLint hModelMat, hViewMat, hProjMat;
    GLint hLightPos, hLightColor, hNumLights;
    GLint hCamPos;
@@ -83,6 +84,8 @@ int main() {
    /* Retrieving handles to save some function calls in the main loop */
    hPos = shader->getPositionHandle();
    hNorm = shader->getNormalHandle();
+   hColor = shader->getColorHandle();
+   hPtSize = shader->getPtSizeHandle();
    hModelMat = shader->getModelMatHandle();
    hViewMat = shader->getViewMatHandle();
    hProjMat = shader->getProjMatHandle();
@@ -118,6 +121,7 @@ int main() {
 
    player.score = 0;
    player.weapon = PISTOL;
+   player.alive = true;
 
    createStage(&walls);
    light->initLights(vec3(crate->getPosition().x, crate->getPosition().y + 0.5, crate->getPosition().z), STAGE_SIZE, STAGE_HEIGHT);
@@ -136,7 +140,7 @@ int main() {
       window->setShaderProjMatrix(hProjMat);
 
       /* Add enemies */
-      if (--enemyCooldown <= 0) {
+      if (player.alive && --enemyCooldown <= 0) {
          tmpEnemy = new Enemy(EnemyType(rand() % ET_END));
          tmpEnemy->setPosition(enemySpawnPts[rand() % SPAWN_PTS]);
          enemies.push_back(tmpEnemy);
@@ -146,20 +150,24 @@ int main() {
       /* Update the crate's position if it has been collected, and draw */
       if (bulletCooldown > 0)
          bulletCooldown--;
-      if (crate->isColliding(camera->getEye())) {
+      if (player.alive && crate->isColliding(camera->getEye())) {
          bulletCooldown = 0;
          crate->setPosition(vec3(rand() % (int)(STAGE_SIZE - 2 * CAM_BUFFER) - (STAGE_SIZE / 2.0 - CAM_BUFFER), 0.5,
             rand() % (int)(STAGE_SIZE - 2 * CAM_BUFFER) - (STAGE_SIZE / 2.0 - CAM_BUFFER)));
          light->updateCrateLight(crate->getPosition());
-         player.score++;
+         
+         if (player.alive)
+            player.score++;
          do {
             tmpWeapon = Weapon(rand() % W_END);
          } while (tmpWeapon == player.weapon);
          player.weapon = tmpWeapon;
       }
-      shader->setMaterial(crate->getColor());
-      crate->update();
-      crate->draw(hPos, hNorm, hModelMat);
+      if (player.alive) {
+         shader->setMaterial(crate->getColor());
+         crate->update();
+         crate->draw(hPos, hNorm, hModelMat);
+      }
 
       /* Draw the stage */
       for (count = 0; count < walls.size(); count++) {
@@ -169,8 +177,8 @@ int main() {
 
       /* Draw the enemies */
       for (count = 0; count < enemies.size(); count++) {
-         /* Check for collisions with bullets */
          if (enemies[count]->getState() == LIVE) {
+            /* Check for collisions with bullets */
             for (count2 = 0; count2 < bullets.size(); count2++) {
                if (enemies[count]->isColliding(bullets[count2])) {
                   particleSys->createParticles(bullets[count2]->getPosition(), 50, CONFETTI);
@@ -181,7 +189,23 @@ int main() {
                      break;
                }
             }
+
+            /* Check for collision with camera. If collided, end game */
+            if (enemies[count]->isColliding(camera->getEye())) {
+               player.alive = false;
+               light->updateStageLightsLose();
+               printf("GAME OVER\nScore: %d\n", player.score);
+
+               for (count2 = 0; count2 < enemies.size(); count2++) {
+                  particleSys->createParticles(enemies[count2]->getPosition(), 400, CONFETTI);
+                  delete enemies[count2];
+               }
+               enemies.clear();
+               delete crate;
+               break;
+            }
          }
+         
          /* Remove enemy if dead */
          enemies[count]->update(camera->getEye());
          if (enemies[count]->getState() == DEAD) {
@@ -215,10 +239,11 @@ int main() {
       /* Update particles and draw */
       shader->setMaterial(ATTRIB);
       particleSys->update();
-      particleSys->draw(hModelMat, hPos, shader->getColorHandle(), shader->getPtSizeHandle());
+      particleSys->draw(hModelMat, hPos, hColor, hPtSize);
       
       /* Update the stage lights and send to the shader */
-      light->updateStageLights();
+      if (player.alive)
+         light->updateStageLights();
       light->setShaderLights(hLightPos, hLightColor, hNumLights);
       light->resetLights();
 

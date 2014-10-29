@@ -31,6 +31,8 @@ void Light::initLights(vec3 crateLightPos, float stageSize, float stageHeight) {
 
    lightPos = vector<float>(lp, lp + sizeof(lp) / sizeof(float));
    lightColor = vector<float>(lc, lc + sizeof(lc) / sizeof(float));
+   this->stageSize = stageSize;
+   this->stageHeight = stageHeight;
 }
 
 /* Send the light data to the shader */
@@ -50,27 +52,27 @@ void Light::resetLights() {
  * return: 1 if the light was successfully added, 0 otherwise 
  */
 int Light::addLight(vec3 pos, Color color) {
-   vec3 bulletColor;
+   vec3 newColor;
 
    /* Make sure not to exceed the maximum number of lights */
    if (lightPos.size() >= maxLights * 3)
       return 0;
 
    if (color == GLOW_YELLOW)
-      bulletColor = vec3(1, 1, 0);
+      newColor = vec3(1, 1, 0);
    else if (color == GLOW_RED)
-      bulletColor = vec3(1, 0, 0);
+      newColor = vec3(1, 0, 0);
    else if (color == GLOW_TEAL)
-      bulletColor = vec3(0, 1, 1);
+      newColor = vec3(0, 1, 1);
    else
-      bulletColor = vec3(1, 1, 1);
+      newColor = vec3(1, 1, 1);
 
    lightPos.push_back(pos.x);
    lightPos.push_back(pos.y);
    lightPos.push_back(pos.z);
-   lightColor.push_back(bulletColor.r);
-   lightColor.push_back(bulletColor.g);
-   lightColor.push_back(bulletColor.b);
+   lightColor.push_back(newColor.r);
+   lightColor.push_back(newColor.g);
+   lightColor.push_back(newColor.b);
 
    return 1;
 }
@@ -85,8 +87,7 @@ void Light::updateCrateLight(vec3 newPos) {
 /* Move and update the color of the stage lights */
 void Light::updateStageLights() {
    static float angle = 0;
-   static float radius = lightPos[0];
-   static float const maxRad = lightPos[0];
+   static float radius = stageSize / 3.0;
    static bool angDecr = false;
    static bool radDecr = true;
    static int colorIndex = 0;
@@ -114,7 +115,7 @@ void Light::updateStageLights() {
       angDecr = !angDecr;
 
    radius = radDecr ? radius - 0.1 : radius + 0.1;
-   if (radius >= maxRad || radius <= 0) {
+   if (radius >= stageSize / 3.0 || radius <= 0) {
       radDecr = !radDecr;
       
       colorIndex += 3;
@@ -130,7 +131,7 @@ void Light::updateStageLights() {
       lightColor[4*3 + 1] = colors[colorIndex + 2].g;
       lightColor[4*3 + 2] = colors[colorIndex + 2].b;
    }
-   else if (abs(radius - maxRad / 2.0) < 0.1) {
+   else if (abs(radius - (stageSize / 3.0) / 2.0) < 0.1) {
       lightColor[0] = lightColor[3 + 0] = colors[colorIndex + 1].r;
       lightColor[1] = lightColor[3 + 1] = colors[colorIndex + 1].g;
       lightColor[2] = lightColor[3 + 2] = colors[colorIndex + 1].b;
@@ -138,6 +139,27 @@ void Light::updateStageLights() {
       lightColor[2*3 + 1] = lightColor[3*3 + 1] = colors[colorIndex].g;
       lightColor[2*3 + 2] = lightColor[3*3 + 2] = colors[colorIndex].b;
    }
+}
+
+/* Set the stage lights when the player has lost */
+void Light::updateStageLightsLose() {
+   int count;
+
+   float const lp[] = {
+      stageSize / 4.0, stageHeight, stageSize / 4.0,
+      -stageSize / 4.0, stageHeight, stageSize / 4.0,
+      -stageSize / 4.0, stageHeight, -stageSize / 4.0,
+      stageSize / 4.0, stageHeight, -stageSize / 4.0,
+      0, stageHeight, 0
+   };
+
+   for (count = 0; count < (minLights - 1) * 3; count++) {
+      lightPos[count] = lp[count];
+      lightColor[count] = 1;
+   }
+   lightColor[minLights * 3 - 3] = 0;
+   lightColor[minLights * 3 - 2] = 0;
+   lightColor[minLights * 3 - 1] = 0;
 }
 
 int Light::getMinLights() {

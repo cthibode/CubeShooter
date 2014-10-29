@@ -16,7 +16,7 @@ class ParticleSystem {
    public:
       ParticleSystem();
       ~ParticleSystem();
-      void initialize(); // create buffer objects
+      void initialize();
       void createParticles(vec3 position, int amount, PartBehavior type);
       void update();
       void draw(GLint modelMatHandle, GLint positionHandle, GLint colorHandle, GLint ptSizeHandle);
