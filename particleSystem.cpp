@@ -48,7 +48,7 @@ void ParticleSystem::createParticles(vec3 position, int amount, PartBehavior typ
             tmpPart.color = vec4(rand() % 100 / 100.0, rand() % 100 / 100.0, rand() % 100 / 100.0, 0.7);
             tmpPart.velocity = vec3(cos(tmpAng) * tmpDist, tmpDist, sin(tmpAng) * tmpDist);
             tmpPart.life = 90 + rand() % 20;
-            tmpPart.size = 2.0;
+            tmpPart.size = 5.0;
             break;
       }
       

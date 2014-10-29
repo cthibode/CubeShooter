@@ -15,7 +15,7 @@ class Shader {
       GLint getPositionHandle();
       GLint getNormalHandle();
       GLint getColorHandle();
-      GLint getPtSizeHandle(); // needed?
+      GLint getPtSizeHandle();
       GLint getModelMatHandle();
       GLint getViewMatHandle();
       GLint getProjMatHandle();
@@ -30,7 +30,7 @@ class Shader {
       GLint h_aPosition;
       GLint h_aNormal;
       GLint h_aColor;
-      GLint h_aPtSize; /// needed?
+      GLint h_aPtSize;
       
       GLint h_uModelMatrix;
       GLint h_uViewMatrix;

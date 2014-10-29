@@ -1,12 +1,12 @@
-
 attribute vec3 aPosition;
 attribute vec3 aNormal;
 attribute vec4 aColor;
+attribute float aPtSize;
 
 uniform mat4 uModelMatrix;
 uniform mat4 uViewMatrix;
 uniform mat4 uProjMatrix;
-uniform int uShadeMode;
+uniform vec3 uCamPos;
 
 varying vec3 vPos, vNorm;
 varying vec4 vColor;
@@ -25,4 +25,7 @@ void main() {
    vPos = vec3(transPos.xyz);
    vNorm = vec3(transNorm.xyz);
    vColor = aColor;
+
+   /* Set the point size for particles, adjusting for the distance between the particle and the camera */
+   gl_PointSize = aPtSize * aPtSize / distance(uCamPos, vPos);
 }

@@ -109,7 +109,7 @@ int main() {
    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
    /* Initialize particle system */
-   glPointSize(4.0);
+   glEnable(GL_PROGRAM_POINT_SIZE);
    particleSys->initialize();
 
    /* Initialize the stage and player stats */
