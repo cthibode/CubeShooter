@@ -10,6 +10,7 @@ Crate::~Crate() {
 
 }
 
+/* Rotate the crate */
 void Crate::update() {
    static float age = 0;
    tRotYaw = age;

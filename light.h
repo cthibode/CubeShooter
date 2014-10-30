@@ -1,6 +1,7 @@
 #include <vector>
 #include "main.h"
 
+/* Manages the light positions and colors */
 class Light {
    public:
       Light();
@@ -9,7 +10,7 @@ class Light {
       void setShaderLights(GLint lightPosHandle, GLint lightColorHandle, GLint numLightsHandle);
       void resetLights();
       int addLight(vec3 pos, Color color);
-      void updateCrateLight(vec3 newPos);
+      void updateCrateLight(vec3 cratePos);
       void updateStageLights();
       void updateStageLightsLose();
       int getMinLights();

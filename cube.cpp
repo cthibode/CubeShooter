@@ -22,7 +22,7 @@ Cube::~Cube() {
 
 }
 
-/* Create the buffer objects for a square */
+/* Create the buffer objects for a Cube */
 void Cube::cubeInit() {
    float const verts[] = {
       -0.5, -0.5, -0.5, // back face verts [0-3]

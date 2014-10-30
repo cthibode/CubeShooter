@@ -88,7 +88,6 @@ class Enemy : public Cube {
       float age;
       EnemyType type;
       EnemyState state;
-      
       int health;
       float size;
       float jumpHeight;
@@ -119,7 +118,7 @@ class Bullet : public Cube {
       int life;
 };
 
-/* A cube that gives the player a new weapon and increases score when picked up */
+/* A Cube that gives the player a new weapon and increases score when picked up */
 class Crate : public Cube {
    public:
       Crate();

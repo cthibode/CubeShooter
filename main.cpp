@@ -1,3 +1,9 @@
+/*
+ * Cube Shooter
+ * C++/OpenGL game by Cameron Thibodeaux
+ * October 2014
+ */
+
 #include <stdio.h>
 #include <time.h>
 #include <vector>
@@ -17,6 +23,7 @@
 #define ENEMY_COOLDOWN 200
 #define SPAWN_BUFFER 2
 #define SPAWN_PTS 8
+#define LEVEL_SCORE 20
 
 /* Holds variables concerning the player's current status */
 typedef struct Player {
@@ -47,15 +54,15 @@ int main() {
    int enemyCooldown = ENEMY_COOLDOWN;
    int bulletCooldown = 0;
    bool enemySpawnLoc[SPAWN_PTS] = {false, false, false, false, false, false, false, false};
-   unsigned int count, count2;
    int numSpawned, tmpLoc;
+   unsigned int count, count2;
 
    GLint hPos, hNorm, hColor, hPtSize;
    GLint hModelMat, hViewMat, hProjMat;
    GLint hLightPos, hLightColor, hNumLights;
    GLint hCamPos;
 
-   vec3 enemySpawnPts[] = {
+   vec3 const enemySpawnPts[] = {
       vec3(-STAGE_SIZE / 2.0 + SPAWN_BUFFER, 0, -STAGE_SIZE / 2.0 + SPAWN_BUFFER),
       vec3(0, 0, -STAGE_SIZE / 2.0 + SPAWN_BUFFER),
       vec3(STAGE_SIZE / 2.0 - SPAWN_BUFFER, 0, -STAGE_SIZE / 2.0 + SPAWN_BUFFER),
@@ -136,6 +143,7 @@ int main() {
       keepFPS(60);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+      /* Handle keyboard and mouse inputs, set camera */
       camera->updateJump();
       handleKeyboardInput(window, camera);
       handleMouseInput(window, camera, &bullets, &bulletCooldown, player.weapon);
@@ -152,7 +160,7 @@ int main() {
                enemySpawnLoc[tmpLoc] = true;
                numSpawned++;
             }
-         } while (player.score - numSpawned * 20 > 0 && numSpawned < SPAWN_PTS);
+         } while (player.score - numSpawned * LEVEL_SCORE > 0 && numSpawned < SPAWN_PTS);
 
          for (count = 0; count < SPAWN_PTS; count++) {
             if (enemySpawnLoc[count]) {
@@ -162,12 +170,13 @@ int main() {
                enemies.push_back(tmpEnemy);
             }
          }
-         enemyCooldown = ENEMY_COOLDOWN - player.score % 20 * 4;
+         enemyCooldown = ENEMY_COOLDOWN - player.score % LEVEL_SCORE * 4;
       }
 
       /* Update the crate's position if it has been collected, and draw */
       if (bulletCooldown > 0)
          bulletCooldown--;
+
       if (player.alive && crate->isColliding(camera->getEye())) {
          bulletCooldown = 0;
          crate->setPosition(vec3(rand() % (int)(STAGE_SIZE - 2 * CAM_BUFFER) - (STAGE_SIZE / 2.0 - CAM_BUFFER), 0.5,
@@ -181,6 +190,7 @@ int main() {
          } while (tmpWeapon == player.weapon);
          player.weapon = tmpWeapon;
       }
+
       if (player.alive) {
          particleSys->createParticles(vec3(crate->getPosition().x, 0, crate->getPosition().z), 1, FLOAT_UP);
          shader->setMaterial(crate->getColor());
@@ -307,6 +317,7 @@ void handleMouseInput(Window *window, Camera *camera, vector<Bullet*> *bullets, 
    if (*bulletCooldown <= 0 && window->isMousePressed(GLFW_MOUSE_BUTTON_LEFT)) {
       camPos = camera->getEye();
       lookAtPos = camera->getLookAt();
+
       /* Shotgun: create a random spread of bullets at once */
       if (bulletType == SHOTGUN) {
          for (int count = 0; count < 8; count++) {

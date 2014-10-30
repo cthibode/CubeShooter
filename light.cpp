@@ -78,10 +78,10 @@ int Light::addLight(vec3 pos, Color color) {
 }
 
 /* Update the crate light location */
-void Light::updateCrateLight(vec3 newPos) {
-   lightPos[minLights * 3 - 3] = newPos.x;
-   lightPos[minLights * 3 - 2] = newPos.y + 0.5;
-   lightPos[minLights * 3 - 1] = newPos.z;
+void Light::updateCrateLight(vec3 cratePos) {
+   lightPos[minLights * 3 - 3] = cratePos.x;
+   lightPos[minLights * 3 - 2] = cratePos.y + 0.5;
+   lightPos[minLights * 3 - 1] = cratePos.z;
 }
 
 /* Move and update the color of the stage lights */
@@ -93,14 +93,15 @@ void Light::updateStageLights() {
    static int colorIndex = 0;
 
    static vec3 const colors[] = {
-      vec3(1, 0, 1), vec3(0, 0, 1), vec3(0, 0, .5),
-      vec3(1, 1, 0), vec3(1, 0, 1), vec3(0.5, 0, 0.5),
-      vec3(0, 1, 1), vec3(0, 0, 1), vec3(0, 0.5, 0.5),
-      vec3(1, 0, 0), vec3(0.5, 0, 1), vec3(0.5, 0, 0),
-      vec3(0, 1, 1), vec3(0, 1, 0), vec3(0, 0.5, 0),
-      vec3(1, 1, 0), vec3(1, 0.5, 0), vec3(0.5, 0.5, 0),
+      vec3(1, 0, 1), vec3(0, 0, 1), vec3(0, 0, .5),      // Pink and blue
+      vec3(1, 1, 0), vec3(1, 0, 1), vec3(0.5, 0, 0.5),   // Yellow and pink
+      vec3(0, 1, 1), vec3(0, 0, 1), vec3(0, 0.5, 0.5),   // Teal and blue
+      vec3(1, 0, 0), vec3(0.5, 0, 1), vec3(0.5, 0, 0),   // Red and purple
+      vec3(0, 1, 1), vec3(0, 1, 0), vec3(0, 0.5, 0),     // Teal and green
+      vec3(1, 1, 0), vec3(1, 0.5, 0), vec3(0.5, 0.5, 0)  // Yellow and orange
    };
 
+   /* Update light positions */
    lightPos[0] = radius * cos(DEG_TO_RAD(angle));
    lightPos[2] = radius * sin(DEG_TO_RAD(angle));
    lightPos[1*3 + 0] = radius * cos(DEG_TO_RAD(angle + 180));
@@ -115,6 +116,8 @@ void Light::updateStageLights() {
       angDecr = !angDecr;
 
    radius = radDecr ? radius - 0.1 : radius + 0.1;
+
+   /* Update light colors */
    if (radius >= stageSize / 3.0 || radius <= 0) {
       radDecr = !radDecr;
       

@@ -25,6 +25,7 @@ void Camera::setShaderView(GLint viewMatHandle) {
    glUniformMatrix4fv(viewMatHandle, 1, GL_FALSE, value_ptr(View));
 }
 
+/* Send the camera position to the shader */
 void Camera::setShaderCamPos(GLint camPosHandle) {
    glUniform3f(camPosHandle, eye.x, eye.y, eye.z);
 }

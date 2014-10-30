@@ -34,7 +34,7 @@ int Window::initialize() {
    if (!glfwInit())
       return 0;
 
-   window = glfwCreateWindow(width, height, "Cube Shooter", /*glfwGetPrimaryMonitor()*/ NULL, NULL);
+   window = glfwCreateWindow(width, height, "Cube Shooter", NULL, NULL);
    if (!window) {
       glfwTerminate();
       return 0;
@@ -75,7 +75,9 @@ bool Window::isMousePressed(int button) {
    return (glfwGetMouseButton(window, button) == GLFW_PRESS);
 }
 
-/* Stores the pixel difference between the cursor's position and the center of the screen into the given addresses */
+/* Stores the pixel difference between the cursor's position and the center of the screen into the given addresses,
+ * then resets the cursor's position to the center of the window
+ */
 void Window::getMouseDiff(int *dx, int *dy) {
    double xCur, yCur;
 

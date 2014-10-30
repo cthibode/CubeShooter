@@ -42,7 +42,7 @@ Bullet::~Bullet() {
 
 }
 
-/* Rotate the bullet to point towards the target */
+/* Rotate the bullet to point towards the given location */
 void Bullet::align(vec3 target) {
    direction = normalize(target - tPosition);
    tRotPitch = RAD_TO_DEG(atan(direction.y / glm::sqrt(direction.x * direction.x + direction.z * direction.z)));

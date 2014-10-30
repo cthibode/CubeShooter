@@ -51,10 +51,10 @@ void main() {
    else if (uShadeMode == 1) {
       totalColor.rgb = uMat.aColor;
    }
-   /* Particles */
+   /* Attribute color (for particles) */
    else if (uShadeMode == 2) {
       totalColor = vColor;
    }
 
-   gl_FragColor = totalColor;//vec4(totalColor, 1.0);
+   gl_FragColor = totalColor;
 }

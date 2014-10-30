@@ -1,5 +1,6 @@
 #include "main.h"
 
+/* Handles camera movement and gaze direction */
 class Camera {
    public:
       Camera();

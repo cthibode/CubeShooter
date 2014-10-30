@@ -1,6 +1,6 @@
 #include "main.h"
 
-/* Manages the GLFW window */
+/* Manages the GLFW window, including keyboard and mouse input */
 class Window {
    public:
       Window();
