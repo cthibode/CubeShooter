@@ -41,6 +41,7 @@ void ParticleSystem::createParticles(vec3 position, int amount, PartBehavior typ
       tmpPart.type = type;
 
       switch (type) {
+         /* Starts at a single point and spreads outwards */
          case CONFETTI:
             tmpAng = DEG_TO_RAD(rand() % 360);
             tmpDist = rand() % 100 / 1000.0;
@@ -50,13 +51,14 @@ void ParticleSystem::createParticles(vec3 position, int amount, PartBehavior typ
             tmpPart.life = 90 + rand() % 20;
             tmpPart.size = 5.0;
             break;
+         /* Starts in an area around the given point and slowly floats upward */
          case FLOAT_UP:
             tmpAng = DEG_TO_RAD(rand() % 360);
             tmpDist = rand() % 100 / 400.0;
             tmpPart.position = position + vec3(cos(tmpAng) * tmpDist, 0, sin(tmpAng) * tmpDist);
             tmpPart.color = vec4(1, 1, 1, 1);
             tmpPart.velocity = vec3(0, 0.01, 0);
-            tmpPart.life = 500;
+            tmpPart.life = 200;
             tmpPart.size = 3.0;
             break;
       }
@@ -91,6 +93,7 @@ void ParticleSystem::update() {
             case FLOAT_UP:
                part->position += part->velocity;
                part->color.a -= 0.005;
+               break;
          }
          part->life--;
 

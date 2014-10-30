@@ -18,11 +18,12 @@
 #define SPAWN_BUFFER 2
 #define SPAWN_PTS 8
 
+/* Holds variables concerning the player's current status */
 typedef struct Player {
    Weapon weapon;
    int score;
    bool alive;
-};
+} Player;
 
 void handleKeyboardInput(Window *window, Camera *camera);
 void handleMouseInput(Window *window, Camera *camera, vector<Bullet*> *bullets, int *bulletCooldown, Weapon bulletType);
@@ -40,11 +41,14 @@ int main() {
    vector<Enemy*> enemies;
    vector<Bullet*> bullets;
    Crate *crate;
+
    Enemy *tmpEnemy;
    Weapon tmpWeapon;
    int enemyCooldown = ENEMY_COOLDOWN;
    int bulletCooldown = 0;
+   bool enemySpawnLoc[SPAWN_PTS] = {false, false, false, false, false, false, false, false};
    unsigned int count, count2;
+   int numSpawned, tmpLoc;
 
    GLint hPos, hNorm, hColor, hPtSize;
    GLint hModelMat, hViewMat, hProjMat;
@@ -139,12 +143,26 @@ int main() {
       camera->setShaderCamPos(hCamPos);
       window->setShaderProjMatrix(hProjMat);
 
-      /* Add enemies */
+      /* Add enemies. A higher score results in more frequent spawning */
       if (player.alive && --enemyCooldown <= 0) {
-         tmpEnemy = new Enemy(EnemyType(rand() % ET_END));
-         tmpEnemy->setPosition(enemySpawnPts[rand() % SPAWN_PTS]);
-         enemies.push_back(tmpEnemy);
-         enemyCooldown = ENEMY_COOLDOWN;
+         numSpawned = 0;
+         do {
+            tmpLoc = rand() % SPAWN_PTS;
+            if (!enemySpawnLoc[tmpLoc]) {
+               enemySpawnLoc[tmpLoc] = true;
+               numSpawned++;
+            }
+         } while (player.score - numSpawned * 20 > 0 && numSpawned < SPAWN_PTS);
+
+         for (count = 0; count < SPAWN_PTS; count++) {
+            if (enemySpawnLoc[count]) {
+               enemySpawnLoc[count] = false;
+               tmpEnemy = new Enemy(EnemyType(rand() % ET_END));
+               tmpEnemy->setPosition(enemySpawnPts[count]);
+               enemies.push_back(tmpEnemy);
+            }
+         }
+         enemyCooldown = ENEMY_COOLDOWN - player.score % 20 * 4;
       }
 
       /* Update the crate's position if it has been collected, and draw */
@@ -195,7 +213,7 @@ int main() {
             if (enemies[count]->isColliding(camera->getEye())) {
                player.alive = false;
                light->updateStageLightsLose();
-               printf("GAME OVER\nScore: %d\n", player.score);
+               printf("GAME OVER\nCrates collected: %d\n", player.score);
 
                for (count2 = 0; count2 < enemies.size(); count2++) {
                   particleSys->createParticles(enemies[count2]->getPosition(), 400, CONFETTI);
@@ -279,13 +297,16 @@ void handleMouseInput(Window *window, Camera *camera, vector<Bullet*> *bullets, 
    Bullet *newBullet;
    vec3 camPos, lookAtPos;
 
+   /* Handle mouse movement */
    window->getMouseDiff(&dx, &dy);
    window->getDimensions(&width, &height);
    camera->moveLookAt(dx, dy, width, height);
 
+   /* Handle mouse click */
    if (*bulletCooldown <= 0 && window->isMousePressed(GLFW_MOUSE_BUTTON_LEFT)) {
       camPos = camera->getEye();
       lookAtPos = camera->getLookAt();
+      /* Shotgun: create a random spread of bullets at once */
       if (bulletType == SHOTGUN) {
          for (int count = 0; count < 8; count++) {
             newBullet = new Bullet(bulletType);
@@ -296,6 +317,7 @@ void handleMouseInput(Window *window, Camera *camera, vector<Bullet*> *bullets, 
             bullets->push_back(newBullet);
          }
       }
+      /* Pistol and Machine Gun: create one bullet at a time */
       else {
          newBullet = new Bullet(bulletType);
          newBullet->setPosition(vec3(camPos.x, camPos.y - 0.2, camPos.z));

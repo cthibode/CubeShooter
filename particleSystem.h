@@ -3,13 +3,13 @@
 enum PartBehavior { CONFETTI, FLOAT_UP };
 
 /* Holds the variables needed for each individual particle */
-struct Particle {
+typedef struct Particle {
    PartBehavior type;
    vec3 position, velocity;
    vec4 color;
    float size;
    int life;
-};
+} Particle;
 
 /* Maintains the creation and behavior of particles */
 class ParticleSystem {
