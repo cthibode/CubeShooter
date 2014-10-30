@@ -201,10 +201,11 @@ int main() {
             for (count2 = 0; count2 < bullets.size(); count2++) {
                if (enemies[count]->isColliding(bullets[count2])) {
                   particleSys->createParticles(bullets[count2]->getPosition(), 50, CONFETTI);
+                  enemies[count]->reduceHealth(bullets[count2]->getDamage());
                   delete bullets[count2];
                   bullets.erase(bullets.begin() + count2);
                   count2--;
-                  if (enemies[count]->reduceHealth())
+                  if (enemies[count]->getState() == DIE)
                      break;
                }
             }

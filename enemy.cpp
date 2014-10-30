@@ -82,12 +82,13 @@ void Enemy::update(vec3 destination) {
    }
 }
 
-/* Reduces health by 1 and changes the enemy's state if necessary 
+/* Reduces health by the given amount and changes the enemy's state if necessary 
  * return: true if the enemy's state is DIE, otherwise false
  */
-bool Enemy::reduceHealth() {
+bool Enemy::reduceHealth(int amt) {
    bool ret = false;
-   if (--health <= 0) {
+   health -= amt;
+   if (health <= 0) {
       state = DIE;
       ret = true;
    }

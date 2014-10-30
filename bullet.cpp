@@ -8,6 +8,7 @@ Bullet::Bullet(Weapon weapon) : Cube() {
          color = GLOW_YELLOW;
          radius = 0.2;
          speed = 0.3;
+         damage = 2;
          cooldown = 30;
          life = 120;
          break;
@@ -17,6 +18,7 @@ Bullet::Bullet(Weapon weapon) : Cube() {
          radius = 0.2;
          speed = 0.3;
          cooldown = 5;
+         damage = 1;
          life = 90;
          break;
       case SHOTGUN:
@@ -24,6 +26,7 @@ Bullet::Bullet(Weapon weapon) : Cube() {
          color = GLOW_TEAL;
          radius = 0.2;
          speed = 0.5;
+         damage = 1;
          cooldown = 50;
          life = 20;
          break;
@@ -76,6 +79,10 @@ bool Bullet::shouldRemove() {
       ret = true;
 
    return ret;
+}
+
+int Bullet::getDamage() {
+   return damage;
 }
 
 int Bullet::getCooldown() {

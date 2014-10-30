@@ -81,7 +81,7 @@ class Enemy : public Cube {
       Enemy(EnemyType enemyType);
       ~Enemy();
       void update(vec3 destination);
-      bool reduceHealth();
+      bool reduceHealth(int amt);
       EnemyState getState();
 
    private:
@@ -105,6 +105,7 @@ class Bullet : public Cube {
       void setBounds(float xPos, float xNeg, float yPos, float yNeg, float zPos, float zNeg);
       void update();
       bool shouldRemove();
+      int getDamage();
       int getCooldown();
       Weapon getType();
 
@@ -113,6 +114,7 @@ class Bullet : public Cube {
       vec3 direction;
       float xPosBound, xNegBound, yPosBound, yNegBound, zPosBound, zNegBound;
       float speed;
+      int damage;
       int cooldown;
       int life;
 };
